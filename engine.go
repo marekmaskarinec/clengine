@@ -8,6 +8,16 @@ import
 	"os"
 	"fmt"
 )
+/*func createPlayer(tile string) error {
+	if tile == "" {
+		playerPosX := 0
+		playerPosY := 0
+		playerTile := tile
+		return nil
+	} else {
+		return errors.New("Player can't have blank tile")
+	}
+}*/
 
 func newWorld(scaleX, scaleY int) ([][]string , error) {
 	world := make([][]string, scaleY)
@@ -22,11 +32,24 @@ func newWorld(scaleX, scaleY int) ([][]string , error) {
 	}
 }
 
-func editWorld(world [][]string, posX, posY int, tile string) ([][]string, error) {
+func editTile(world [][]string, posX, posY int, tile string) ([][]string, error) {
 	if(posX <= 0 || posY <= 0 || posX > len(world) || posY > len(world)){
 		return nil, errors.New("You entered value smaller than zero")
 	} else {
 		world[posX][posY] = tile
+		return world, nil
+	}
+}
+func editWorld(world [][]string, fromX, fromY, toX, toY int, tile string) ([][]string, error) {
+	if (fromX < 0 || fromY < 0 || toX < fromX || toY < fromY) {
+		return nil, errors.New("Invalid number")
+	} else {
+		for i := 0; i <= toX; i++ {
+			world[fromX + i][fromY] = tile
+			for r := 0; r <= toY; r++ {
+			world[fromX + i][fromY + r] = tile
+			}
+		}
 		return world, nil
 	}
 }
@@ -66,12 +89,14 @@ func saveWorld(fileAdress string, world [][]string, height int) error {
 		return nil
 	}
 }
-func drawWorld(world [][]string, worldHeight int) error {
+func drawWorld(world [][]string, worldHeight, playerPosX, playerPosY int, playerTile string) error {
+	worldToDraw := world
+	worldToDraw[playerPosX][playerPosY] = playerTile
 	if (worldHeight <= 0){
 		return errors.New("You entered value smaller than zero")
 	} else {
 		for i := 0; i <= worldHeight; i++ {
-			fmt.Println(world[i][0])
+			fmt.Println(worldToDraw[i][0])
 		}
 		return nil
 	}
