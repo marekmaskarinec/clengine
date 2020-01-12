@@ -1,4 +1,4 @@
-package cliEngine
+package clengine
 
 import
 (
