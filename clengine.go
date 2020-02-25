@@ -8,6 +8,7 @@ import
 	"io/ioutil"
 	"strings"
 	"strconv"
+	"fmt"
 )
 
 type player struct {
@@ -135,19 +136,16 @@ func worldToString(world [][]tile) [][]string{
 		}
 	}
 	return stringWorld
-}
-func drawWorld(world [][]tile, worldHeight, playerPosX, playerPosY int, playerTile string) error {
-	worldToDraw := world
-	worldToDraw[playerPosX][playerPosY] = playerTile
-	if (worldHeight <= 0){
-		return errors.New("You entered value smaller than zero")
-	} else {
-		for i := 0; i <= worldHeight; i++ {
-			fmt.Println(worldToDraw[i][0])
-		}
-		return nil
-	}
 }*/
+func drawWorld(world [][]tile, plX, plY int, plTile string) {
+	world[plX][plY].tile = plTile
+	for i:=0; i<len(world); i++{
+		for j:=0; j<len(world[1]); j++{
+			fmt.Printf(world[i][j].color + world[i][j].tile)
+		}
+	}
+
+}
 func inventoryWeight(inv inventory) int {
 	var weight int
 	for i:=0; i < len(inv.items); i++{
