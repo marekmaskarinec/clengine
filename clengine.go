@@ -4,8 +4,10 @@ import
 (
 	"io"
 	"errors"
-	"bufio"
 	"os"
+	"io/ioutil"
+	"strings"
+	"strconv"
 )
 
 type player struct {
@@ -52,6 +54,7 @@ type tile struct {
 	name string
 	tile string
 	damage int
+	color string
 }
 
 /*func newWorld(scaleX, scaleY int) ([][]tile , error) {
@@ -88,7 +91,7 @@ func editWorld(world [][]tile, fromX, fromY, toX, toY int, tile string) ([][]til
 		return world, nil
 	}
 }
-func loadWorld(fileAddress string, scaleY int) ([][]tile, error) {
+/*func loadWorld(fileAddress string, scaleY int) ([][]tile, error) {
 	world := make([][]tile, 0)
 	text := make([]string, 0)
 	file, err := os.Open(fileAddress)
@@ -124,7 +127,7 @@ func saveWorld(fileAdress string, world [][]tile, height int) error {
 		return nil
 	}
 }
-/*func worldToString(world [][]tile) [][]string{
+func worldToString(world [][]tile) [][]string{
 	stringWorld := make([][]string, len([][]world))
 	for i:=0; i < len(world); i++{
 		for i:=0; i < len([]world); i++{
@@ -158,5 +161,32 @@ func addToInventory(inv inventory, toAdd item) (int, error) {
 		return inventoryWeight(inv), nil
 	} else {
 		return inventoryWeight(inv), errors.New("The item weights too much for you to cary.")
+	}
+}
+func saveWorld(world [][]tile, path string){
+	var c tile
+	file, _ := os.Open(path)
+
+	for i:=0; i<len(world); i++{
+		for j:=0; j<len(world[1]); j++{
+			c = world[i][j]
+			io.WriteString(file, string(i) + "\n" + string(j) + "\n" + c.name + "\n" + c.tile + "\n" + string(c.damage) + "\n" + c.color)
+		}
+	}
+}
+func loadWorld(path string, world [][]tile){
+	var readed []byte
+	var text []string
+	var damage, x, y int
+
+	readed, _ = ioutil.ReadFile(path)
+	text = strings.Split(string(readed), "\n")
+
+	for i:=0;i<len(text); i++{
+		damage, _ = strconv.Atoi(text[i+4])
+		x, _ = strconv.Atoi(text[i])
+		y, _ = strconv.Atoi(text[i+1])
+		world[x][y] = tile{name: text[i+2], tile: text[i+3], damage: damage, color: text[i+5]}
+		i+=6
 	}
 }
