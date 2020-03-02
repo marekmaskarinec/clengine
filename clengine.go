@@ -5,28 +5,27 @@ import
 	"io"
 	"errors"
 	"os"
-	"io/ioutil"
-	"strings"
 	"strconv"
 	"fmt"
+	"bufio"
 )
 
-type player struct {
+type Player struct {
 	hp        int
 	attack    int
 	defense   int
-	inventory inventory
+	inventory Inventory
 	name      string
 	money     int
-	quests    []quest
+	quests    []Quest
 }
 
-type inventory struct {
+type Inventory struct {
 	weightLimit int
-	items []item
+	items []Item
 }
 
-type item struct {
+type Item struct {
 	avgPrice   int
 	weight     int
 	durability int
@@ -36,22 +35,22 @@ type item struct {
 	legal      bool
 }
 
-type quest struct {
+type Quest struct {
 	accepted      int
 	end           int
 	timeToFinnish int
-	requester     character
+	requester     Character
 	message       string
 	toDo          bool
 	legal         bool
 }
 
-type character struct {
+type Character struct {
 	name         string
 	money        int
 }
 
-type tile struct {
+type Tile struct {
 	name string
 	tile string
 	damage int
@@ -71,7 +70,7 @@ type tile struct {
 	}
 }*/
 
-func editTile(world [][]tile, posX, posY int, t tile) ([][]tile, error) {
+func EditTile(world [][]Tile, posX, posY int, t Tile) ([][]Tile, error) {
 	if(posX <= 0 || posY <= 0 || posX > len(world) || posY > len(world)){
 		return nil, errors.New("You entered value smaller than zero")
 	} else {
@@ -79,14 +78,14 @@ func editTile(world [][]tile, posX, posY int, t tile) ([][]tile, error) {
 		return world, nil
 	}
 }
-func editWorld(world [][]tile, fromX, fromY, toX, toY int, tile string) ([][]tile, error) {
+func EditWorld(world [][]Tile, fromX, fromY, toX, toY int, tile Tile) ([][]Tile, error) {
 	if (fromX < 0 || fromY < 0 || toX < fromX || toY < fromY) {
 		return nil, errors.New("Invalid number")
 	} else {
 		for i := 0; i <= toX; i++ {
-			world[fromX + i][fromY].tile = tile
+			world[fromX + i][fromY] = tile
 			for r := 0; r <= toY; r++ {
-			world[fromX + i][fromY + r].tile = tile
+			world[fromX + i][fromY + r] = tile
 			}
 		}
 		return world, nil
@@ -136,55 +135,103 @@ func worldToString(world [][]tile) [][]string{
 		}
 	}
 	return stringWorld
-}*/
-func drawWorld(world [][]tile, plX, plY int, plTile string) {
-	world[plX][plY].tile = plTile
-	for i:=0; i<len(world); i++{
-		for j:=0; j<len(world[1]); j++{
-			fmt.Printf(world[i][j].color + world[i][j].tile)
-		}
-	}
-
 }
-func inventoryWeight(inv inventory) int {
+func drawWorld(world [][]tile, worldHeight, playerPosX, playerPosY int, playerTile string) error {
+	worldToDraw := world
+	worldToDraw[playerPosX][playerPosY] = playerTile
+	if (worldHeight <= 0){
+		return errors.New("You entered value smaller than zero")
+	} else {
+		for i := 0; i <= worldHeight; i++ {
+			fmt.Println(worldToDraw[i][0])
+		}
+		return nil
+	}
+}*/
+func InventoryWeight(inv Inventory) int {
 	var weight int
 	for i:=0; i < len(inv.items); i++{
 		weight += inv.items[i].weight
 	}
 	return weight
 }
-func addToInventory(inv inventory, toAdd item) (int, error) {
-	if inventoryWeight(inv) < inv.weightLimit {
+func AddToInventory(inv Inventory, toAdd Item) (int, error) {
+	if InventoryWeight(inv) < inv.weightLimit {
 		inv.items = append(inv.items, toAdd)
-		return inventoryWeight(inv), nil
+		return InventoryWeight(inv), nil
 	} else {
-		return inventoryWeight(inv), errors.New("The item weights too much for you to cary.")
+		return InventoryWeight(inv), errors.New("The item weights too much for you to cary.")
 	}
 }
-func saveWorld(world [][]tile, path string){
-	var c tile
+func SaveWorld(world [][]Tile, path string){
+	var c Tile
+	//row := []world
 	file, _ := os.Open(path)
-
 	for i:=0; i<len(world); i++{
-		for j:=0; j<len(world[1]); j++{
+		for j:=0; j<len(world[0]); j++{
 			c = world[i][j]
 			io.WriteString(file, string(i) + "\n" + string(j) + "\n" + c.name + "\n" + c.tile + "\n" + string(c.damage) + "\n" + c.color)
+			fmt.Println(string(i) + "\n" + string(j) + "\n" + c.name + "\n" + c.tile + "\n" + string(c.damage) + "\n" + c.color)
 		}
 	}
 }
-func loadWorld(path string, world [][]tile){
-	var readed []byte
-	var text []string
+func LoadWorld(path string, world *[][]Tile){
+	//var readed []byte
+	text := []string{}
 	var damage, x, y int
 
-	readed, _ = ioutil.ReadFile(path)
-	text = strings.Split(string(readed), "\n")
+	file, err := os.Open(path)
+  if err != nil {
+    panic(err)
+  }
+  defer file.Close()
 
-	for i:=0;i<len(text); i++{
+  scanner := bufio.NewScanner(file)
+  for scanner.Scan() {
+    text = append(text, scanner.Text())
+		//fmt.Println(scanner.Text())
+  }
+
+	/*
+	readed, _ = ioutil.ReadFile(path)
+	text = append(text, "")
+	row = 0
+	for i:=0;i<len(readed);i++{
+		if string(readed[i]) == ","{
+			row += 1
+			text = append(text, "")
+		} else {
+			text[row] = string(readed[i])
+		}
+	}*/
+
+	//fmt.Println(text)
+
+	for i:=0;i<len(text)-5; i++{
 		damage, _ = strconv.Atoi(text[i+4])
 		x, _ = strconv.Atoi(text[i])
 		y, _ = strconv.Atoi(text[i+1])
-		world[x][y] = tile{name: text[i+2], tile: text[i+3], damage: damage, color: text[i+5]}
-		i+=6
+		for len(*world) <= x{
+			(*world) = append(*world, make([]Tile, 0))
+		}
+		for len((*world)[x]) <= y{
+			(*world)[x] = append((*world)[x], Tile{})
+		}
+		(*world)[x][y] = Tile{name: text[i+2], tile: text[i+3], damage: damage, color: text[i+5]}
+		i+=5
+		//fmt.Println(*world)
+	}
+}
+func DrawWorld(world [][]Tile){
+	var c Tile
+	var toPrint string
+	for i:=0; i<len(world); i++{
+		//fmt.Println(world[i])
+		for j:=0; j<len(world[0]); j++{
+			c = world[i][j]
+			toPrint = c.color + c.tile
+			fmt.Print(toPrint)
+		}
+		fmt.Println("")
 	}
 }
