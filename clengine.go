@@ -170,7 +170,7 @@ func SaveWorld(world [][]Tile, path string){
 	for i:=0; i<len(world); i++{
 		for j:=0; j<len(world[0]); j++{
 			c = world[i][j]
-			io.WriteString(file, string(i) + "\n" + string(j) + "\n" + c.name + "\n" + c.tile + "\n" + string(c.damage) + "\n" + c.color)
+			io.WriteString(file, strconv.Itoa(i) + "\n" + strconv.Itoa(j) + "\n" + c.name + "\n" + c.tile + "\n" + strconv.Itoa(c.damage) + "\n" + c.color)
 			fmt.Println(string(i) + "\n" + string(j) + "\n" + c.name + "\n" + c.tile + "\n" + string(c.damage) + "\n" + c.color)
 		}
 	}
