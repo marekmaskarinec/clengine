@@ -8,6 +8,7 @@ import
 	"strconv"
 	"fmt"
 	"bufio"
+	"github.com/fatih/color"
 )
 
 type Player struct {
@@ -56,6 +57,7 @@ type Tile struct {
 	damage int
 	color string
 }
+
 
 /*func newWorld(scaleX, scaleY int) ([][]tile , error) {
 	world := make([][]string, scaleY)
@@ -224,14 +226,20 @@ func LoadWorld(path string, world *[][]Tile){
 }
 func DrawWorld(world [][]Tile){
 	var c Tile
-	var toPrint string
+	palette := palette()
+	col := color.New(color.FgWhite)
 	for i:=0; i<len(world); i++{
 		//fmt.Println(world[i])
 		for j:=0; j<len(world[0]); j++{
 			c = world[i][j]
-			toPrint = c.color + c.tile
-			fmt.Print(toPrint)
+			col = color.New(palette[c.color])
+			col.Print(c.tile)
 		}
 		fmt.Println("")
 	}
+}
+func palette() map[string]color.Attribute{
+	colors := make(map[string]color.Attribute)
+	colors["green"] = color.FgGreen
+	return colors
 }
