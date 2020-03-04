@@ -2,7 +2,7 @@ package clengine
 
 import
 (
-	"io"
+	"io/ioutil"
 	"errors"
 	"os"
 	"strconv"
@@ -167,15 +167,15 @@ func AddToInventory(inv Inventory, toAdd Item) (int, error) {
 }
 func SaveWorld(world [][]Tile, path string){
 	var c Tile
-	//row := []world
-	file, _ := os.Open(path)
+	var toWrite string
 	for i:=0; i<len(world); i++{
 		for j:=0; j<len(world[0]); j++{
 			c = world[i][j]
-			io.WriteString(file, strconv.Itoa(i) + "\n" + strconv.Itoa(j) + "\n" + c.name + "\n" + c.tile + "\n" + strconv.Itoa(c.damage) + "\n" + c.color)
-			fmt.Println(string(i) + "\n" + string(j) + "\n" + c.name + "\n" + c.tile + "\n" + string(c.damage) + "\n" + c.color)
+			//io.WriteString(file, strconv.Itoa(i) + "\n" + strconv.Itoa(j) + "\n" + c.name + "\n" + c.tile + "\n" + strconv.Itoa(c.damage) + "\n" + c.color)
+			toWrite += strconv.Itoa(i) + "\n" + strconv.Itoa(j) + "\n" + c.name + "\n" + c.tile + "\n" + strconv.Itoa(c.damage) + "\n" + c.color + "\n"
 		}
 	}
+	ioutil.WriteFile(path, []byte(toWrite), 0644)
 }
 func LoadWorld(path string, world *[][]Tile){
 	//var readed []byte
