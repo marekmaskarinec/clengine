@@ -52,10 +52,10 @@ type Character struct {
 }
 
 type Tile struct {
-	name string
-	tile string
-	damage int
-	color string
+	Name string
+	Tile string
+	Damage int
+	Color string
 }
 
 
@@ -84,8 +84,17 @@ func EditWorld(world [][]Tile, fromX, fromY, toX, toY int, tile Tile) ([][]Tile,
 	if (fromX < 0 || fromY < 0 || toX < fromX || toY < fromY) {
 		return nil, errors.New("Invalid number")
 	} else {
+		for len(world) <= toX{
+			world = append(world, make([]Tile, 0))
+		}
+		for len(world[toX]) <= toY{
+			//fmt.Println("x")
+			world[toX] = append(world[toX], Tile{})
+		}
+
 		for i := 0; i <= toX; i++ {
-			world[fromX + i][fromY] = tile
+			fmt.Println("x")
+			world[fromX][fromY] = tile
 			for r := 0; r <= toY; r++ {
 			world[fromX + i][fromY + r] = tile
 			}
@@ -172,7 +181,7 @@ func SaveWorld(world [][]Tile, path string){
 		for j:=0; j<len(world[0]); j++{
 			c = world[i][j]
 			//io.WriteString(file, strconv.Itoa(i) + "\n" + strconv.Itoa(j) + "\n" + c.name + "\n" + c.tile + "\n" + strconv.Itoa(c.damage) + "\n" + c.color)
-			toWrite += strconv.Itoa(i) + "\n" + strconv.Itoa(j) + "\n" + c.name + "\n" + c.tile + "\n" + strconv.Itoa(c.damage) + "\n" + c.color + "\n"
+			toWrite += strconv.Itoa(i) + "\n" + strconv.Itoa(j) + "\n" + c.Name + "\n" + c.Tile + "\n" + strconv.Itoa(c.Damage) + "\n" + c.Color + "\n"
 		}
 	}
 	ioutil.WriteFile(path, []byte(toWrite), 0644)
@@ -219,7 +228,7 @@ func LoadWorld(path string, world *[][]Tile){
 		for len((*world)[x]) <= y{
 			(*world)[x] = append((*world)[x], Tile{})
 		}
-		(*world)[x][y] = Tile{name: text[i+2], tile: text[i+3], damage: damage, color: text[i+5]}
+		(*world)[x][y] = Tile{Name: text[i+2], Tile: text[i+3], Damage: damage, Color: text[i+5]}
 		i+=5
 		//fmt.Println(*world)
 	}
@@ -232,8 +241,8 @@ func DrawWorld(world [][]Tile){
 		//fmt.Println(world[i])
 		for j:=0; j<len(world[0]); j++{
 			c = world[i][j]
-			col = color.New(palette[c.color])
-			col.Print(c.tile)
+			col = color.New(palette[c.Color])
+			col.Print(c.Tile)
 		}
 		fmt.Println("")
 	}
@@ -241,5 +250,11 @@ func DrawWorld(world [][]Tile){
 func palette() map[string]color.Attribute{
 	colors := make(map[string]color.Attribute)
 	colors["green"] = color.FgGreen
+	colors["yellow"] = color.FgYellow
+	colors["blue"] = color.FgBlue
+	colors["red"] = color.FgRed
+	colors["cyan"] = color.FgCyan
+	//colors["brown"] = color.FgBrown
+	//colors["orange"] = color.FgOrange
 	return colors
 }
