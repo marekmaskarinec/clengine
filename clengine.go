@@ -58,20 +58,7 @@ type Tile struct {
 	Color string
 }
 
-
-/*func newWorld(scaleX, scaleY int) ([][]tile , error) {
-	world := make([][]string, scaleY)
-	for i := 0; i < scaleY; i++ {
-		world[i] = make([]tile, scaleX)
-	}
-	//var world [scaleX][scaleY]string
-	if(scaleX <= 0 || scaleY <= 0){
-		return nil, errors.New("You entered value smaller than zero")
-	} else {
-		return world, nil
-	}
-}*/
-
+//changes one specific tile in the world
 func EditTile(world [][]Tile, posX, posY int, t Tile) ([][]Tile, error) {
 	if(posX <= 0 || posY <= 0 || posX > len(world) || posY > len(world)){
 		return nil, errors.New("You entered value smaller than zero")
@@ -80,6 +67,8 @@ func EditTile(world [][]Tile, posX, posY int, t Tile) ([][]Tile, error) {
 		return world, nil
 	}
 }
+
+//changes all tiles in a rectangular shape
 func EditWorld(world [][]Tile, fromX, fromY, toX, toY int, tile Tile) ([][]Tile, error) {
 	if (fromX < 0 || fromY < 0 || toX < fromX || toY < fromY) {
 		return nil, errors.New("Invalid number")
@@ -102,63 +91,8 @@ func EditWorld(world [][]Tile, fromX, fromY, toX, toY int, tile Tile) ([][]Tile,
 		return world, nil
 	}
 }
-/*func loadWorld(fileAddress string, scaleY int) ([][]tile, error) {
-	world := make([][]tile, 0)
-	text := make([]string, 0)
-	file, err := os.Open(fileAddress)
-	if(err != nil){
-		return nil, errors.New("Problem occured, while opening the file")
-	}
-	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	for i := 0; scanner.Scan(); i++ {
-		//text = append(text, scanner.Text()...)
-		text[i] = scanner.Text()
-	}
-	for i := 0; i <= scaleY; i++{
-		//world = append(world, text[i])
-		world[0][i].tile = text[i]
-	}
-	return world, nil
-}
-func saveWorld(fileAdress string, world [][]tile, height int) error {
-	file, err := os.Open(fileAdress)
-	if(err != nil){
-		return errors.New("Problem occured, while saving the file")
-	}
-	defer file.Close()
-
-	for i := 0; i < height; i++ {
-		_, err = io.WriteString(file, world[0][i].tile)
-	}
-	if err != nil {
-		return err
-	} else {
-		return nil
-	}
-}
-func worldToString(world [][]tile) [][]string{
-	stringWorld := make([][]string, len([][]world))
-	for i:=0; i < len(world); i++{
-		for i:=0; i < len([]world); i++{
-			stringWorld[int(i/len([]world))][i] = append(stringWorld, world[i].tile)
-		}
-	}
-	return stringWorld
-}
-func drawWorld(world [][]tile, worldHeight, playerPosX, playerPosY int, playerTile string) error {
-	worldToDraw := world
-	worldToDraw[playerPosX][playerPosY] = playerTile
-	if (worldHeight <= 0){
-		return errors.New("You entered value smaller than zero")
-	} else {
-		for i := 0; i <= worldHeight; i++ {
-			fmt.Println(worldToDraw[i][0])
-		}
-		return nil
-	}
-}*/
+//returns, how much does the inventory weight
 func InventoryWeight(inv Inventory) int {
 	var weight int
 	for i:=0; i < len(inv.items); i++{
@@ -166,6 +100,8 @@ func InventoryWeight(inv Inventory) int {
 	}
 	return weight
 }
+
+//adds item to inventory and automaticaly checks weight
 func AddToInventory(inv Inventory, toAdd Item) (int, error) {
 	if InventoryWeight(inv) < inv.weightLimit {
 		inv.items = append(inv.items, toAdd)
@@ -174,20 +110,22 @@ func AddToInventory(inv Inventory, toAdd Item) (int, error) {
 		return InventoryWeight(inv), errors.New("The item weights too much for you to cary.")
 	}
 }
+
+//saves world to a text file
 func SaveWorld(world [][]Tile, path string){
 	var c Tile
 	var toWrite string
 	for i:=0; i<len(world); i++{
 		for j:=0; j<len(world[0]); j++{
 			c = world[i][j]
-			//io.WriteString(file, strconv.Itoa(i) + "\n" + strconv.Itoa(j) + "\n" + c.name + "\n" + c.tile + "\n" + strconv.Itoa(c.damage) + "\n" + c.color)
 			toWrite += strconv.Itoa(i) + "\n" + strconv.Itoa(j) + "\n" + c.Name + "\n" + c.Tile + "\n" + strconv.Itoa(c.Damage) + "\n" + c.Color + "\n"
 		}
 	}
 	ioutil.WriteFile(path, []byte(toWrite), 0644)
 }
+
+//loads world from file
 func LoadWorld(path string, world *[][]Tile){
-	//var readed []byte
 	text := []string{}
 	var damage, x, y int
 
@@ -200,23 +138,7 @@ func LoadWorld(path string, world *[][]Tile){
   scanner := bufio.NewScanner(file)
   for scanner.Scan() {
     text = append(text, scanner.Text())
-		//fmt.Println(scanner.Text())
   }
-
-	/*
-	readed, _ = ioutil.ReadFile(path)
-	text = append(text, "")
-	row = 0
-	for i:=0;i<len(readed);i++{
-		if string(readed[i]) == ","{
-			row += 1
-			text = append(text, "")
-		} else {
-			text[row] = string(readed[i])
-		}
-	}*/
-
-	//fmt.Println(text)
 
 	for i:=0;i<len(text)-5; i++{
 		damage, _ = strconv.Atoi(text[i+4])
@@ -230,15 +152,15 @@ func LoadWorld(path string, world *[][]Tile){
 		}
 		(*world)[x][y] = Tile{Name: text[i+2], Tile: text[i+3], Damage: damage, Color: text[i+5]}
 		i+=5
-		//fmt.Println(*world)
 	}
 }
+
+//prints out the world to terminal
 func DrawWorld(world [][]Tile){
 	var c Tile
 	palette := palette()
 	col := color.New(color.FgWhite)
 	for i:=0; i<len(world); i++{
-		//fmt.Println(world[i])
 		for j:=0; j<len(world[0]); j++{
 			c = world[i][j]
 			col = color.New(palette[c.Color])
@@ -247,6 +169,8 @@ func DrawWorld(world [][]Tile){
 		fmt.Println("")
 	}
 }
+
+//returns color palette
 func palette() map[string]color.Attribute{
 	colors := make(map[string]color.Attribute)
 	colors["green"] = color.FgGreen
@@ -254,7 +178,5 @@ func palette() map[string]color.Attribute{
 	colors["blue"] = color.FgBlue
 	colors["red"] = color.FgRed
 	colors["cyan"] = color.FgCyan
-	//colors["brown"] = color.FgBrown
-	//colors["orange"] = color.FgOrange
 	return colors
 }
