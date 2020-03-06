@@ -84,19 +84,19 @@ func EditWorld(world [][]Tile, fromX, fromY, toX, toY int, tile Tile) ([][]Tile,
 	if (fromX < 0 || fromY < 0 || toX < fromX || toY < fromY) {
 		return nil, errors.New("Invalid number")
 	} else {
-		for len(world) <= toX{
+		for len(world) <= fromX + toX{
 			world = append(world, make([]Tile, 0))
 		}
-		for len(world[toX]) <= toY{
-			//fmt.Println("x")
-			world[toX] = append(world[toX], Tile{})
+		for i:=0; i<=toX; i++{
+			for len(world[fromX + i]) <= fromY + toY{
+				//fmt.Println("x")
+				world[fromX + i] = append(world[fromX + i], Tile{})
+			}
 		}
 
-		for i := 0; i <= toX; i++ {
-			fmt.Println("x")
-			world[fromX][fromY] = tile
+		for i := 0; i < toX; i++ {
 			for r := 0; r <= toY; r++ {
-			world[fromX + i][fromY + r] = tile
+				world[fromX + i][fromY + r] = tile
 			}
 		}
 		return world, nil
