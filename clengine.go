@@ -12,28 +12,29 @@ import
 )
 
 type Player struct {
-	hp        int
-	attack    int
-	defense   int
-	inventory Inventory
-	name      string
-	money     int
-	quests    []Quest
+	Hp        int
+	Defense   int
+	Inv	  Inventory
+	Name      string
+	Money     int
+	Quests    []Quest
+	Tile	  Tile
+	Pos	  Ve2
 }
 
 type Inventory struct {
-	weightLimit int
-	items []Item
+	WeightLimit int
+	Items []Item
 }
 
 type Item struct {
-	avgPrice   int
-	weight     int
-	durability int
-	attack     int
-	canBuild   bool
-	stolen     bool
-	legal      bool
+	AvgPrice   int
+	Weight     int
+	Durability int
+	Attack     int
+	CanBuild   bool
+	Stolen     bool
+	Legal      bool
 }
 
 type Quest struct {
@@ -58,34 +59,60 @@ type Tile struct {
 	Color string
 }
 
+type Ve2 struct {
+	X int
+	Y int
+}
+
+type Enemy struct {
+	Name string
+	Tile Tile
+	Pos Ve2
+	FocusPoint Ve2
+	Health int
+	Weapon Attack
+	Distance int
+}
+
+type Attack struct {
+	Name string
+	Tile Tile
+	Damage int
+}
+
 //changes one specific tile in the world
-func EditTile(world [][]Tile, posX, posY int, t Tile) ([][]Tile, error) {
-	if(posX <= 0 || posY <= 0 || posX > len(world) || posY > len(world)){
+func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
+	if(pos.X <= 0 || pos.Y <= 0 || pos.X > len(world) || pos.Y > len(world)){
 		return nil, errors.New("You entered value smaller than zero")
 	} else {
-		world[posX][posY] = t
+		world[pos.X][pos.Y] = t
 		return world, nil
 	}
 }
 
+//returns new Ve2
+func NewVe2(x, y int) Ve2{
+	return Ve2{X: x, Y: y}
+}
+
 //changes all tiles in a rectangular shape
-func EditWorld(world [][]Tile, fromX, fromY, toX, toY int, tile Tile) ([][]Tile, error) {
-	if (fromX < 0 || fromY < 0 || toX < fromX || toY < fromY) {
+func EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
+	if (from.X < 0 || from.Y < 0 || to.X < from.X || to.Y < from.Y) {
 		return nil, errors.New("Invalid number")
 	} else {
-		for len(world) <= fromX + toX{
+		for len(world) <= from.X + to.X{
 			world = append(world, make([]Tile, 0))
 		}
-		for i:=0; i<=toX; i++{
-			for len(world[fromX + i]) <= fromY + toY{
+		for i:=0; i<=to.X; i++{
+			for len(world[from.X + i]) <= from.Y + to.Y{
 				//fmt.Println("x")
-				world[fromX + i] = append(world[fromX + i], Tile{})
+				world[from.X + i] = append(world[from.X + i], Tile{})
 			}
 		}
 
-		for i := 0; i < toX; i++ {
-			for r := 0; r <= toY; r++ {
-				world[fromX + i][fromY + r] = tile
+		for i := 0; i < to.X; i++ {
+			for r := 0; r <= to.Y; r++ {
+				world[from.X + i][from.Y + r] = tile
 			}
 		}
 		return world, nil
@@ -95,16 +122,16 @@ func EditWorld(world [][]Tile, fromX, fromY, toX, toY int, tile Tile) ([][]Tile,
 //returns, how much does the inventory weight
 func InventoryWeight(inv Inventory) int {
 	var weight int
-	for i:=0; i < len(inv.items); i++{
-		weight += inv.items[i].weight
+	for i:=0; i < len(inv.Items); i++{
+		weight += inv.Items[i].Weight
 	}
 	return weight
 }
 
 //adds item to inventory and automaticaly checks weight
 func AddToInventory(inv Inventory, toAdd Item) (int, error) {
-	if InventoryWeight(inv) < inv.weightLimit {
-		inv.items = append(inv.items, toAdd)
+	if InventoryWeight(inv) < inv.WeightLimit {
+		inv.Items = append(inv.Items, toAdd)
 		return InventoryWeight(inv), nil
 	} else {
 		return InventoryWeight(inv), errors.New("The item weights too much for you to cary.")
@@ -179,4 +206,25 @@ func palette() map[string]color.Attribute{
 	colors["red"] = color.FgRed
 	colors["cyan"] = color.FgCyan
 	return colors
+}
+
+func (e *Enemy) Ai(time int){
+	if e.Pos.X < e.FocusPoint.X {
+		if time % 500 == 0{
+			e.Pos.X += 1
+		}
+	} else if e.Pos.X > e.FocusPoint.X {
+		if time % 500 == 0{
+			e.Pos.X -= 1
+		}
+	}
+	if e.Pos.Y < e.FocusPoint.Y {
+		if time % 500 == 0{
+			e.Pos.Y += 1
+		}
+	} else if e.Pos.Y > e.FocusPoint.Y {
+		if time % 500 == 0{
+			e.Pos.Y -= 1
+		}
+	}
 }
