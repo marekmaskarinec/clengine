@@ -9,6 +9,7 @@ import
 	"fmt"
 	"bufio"
 	"github.com/fatih/color"
+	"math"
 )
 
 type Player struct {
@@ -64,7 +65,7 @@ type Ve2 struct {
 	Y int
 }
 
-type Enemy struct {
+type BattleUnit struct {
 	Name string
 	Tile Tile
 	Pos Ve2
@@ -78,6 +79,7 @@ type Attack struct {
 	Name string
 	Tile Tile
 	Damage int
+	AttackRate int
 }
 
 //changes one specific tile in the world
@@ -208,23 +210,37 @@ func palette() map[string]color.Attribute{
 	return colors
 }
 
-func (e *Enemy) Ai(time int){
-	if e.Pos.X < e.FocusPoint.X {
-		if time % 500 == 0{
-			e.Pos.X += 1
+func (u *BattleUnit) Ai(time int){
+	attack := false
+	lastAttack := 0
+	if attack == false{
+		if u.Pos.X < u.FocusPoint.X {
+			if time % 500 == 0{
+				u.Pos.X += 1
+			}
+		} else if u.Pos.X > u.FocusPoint.X {
+			if time % 500 == 0{
+				u.Pos.X -= 1
+			}
 		}
-	} else if e.Pos.X > e.FocusPoint.X {
-		if time % 500 == 0{
-			e.Pos.X -= 1
+		if u.Pos.Y < u.FocusPoint.Y {
+			if time % 500 == 0{
+				u.Pos.Y += 1
+			}
+		} else if u.Pos.Y > u.FocusPoint.Y {
+			if time % 500 == 0{
+				u.Pos.Y -= 1
+			}
 		}
 	}
-	if e.Pos.Y < e.FocusPoint.Y {
-		if time % 500 == 0{
-			e.Pos.Y += 1
-		}
-	} else if e.Pos.Y > e.FocusPoint.Y {
-		if time % 500 == 0{
-			e.Pos.Y -= 1
-		}
+	if float64(u.Distance) <= math.Sqrt(float64(((u.Pos.X - u.FocusPoint.X) * (u.Pos.X - u.FocusPoint.X)) - ((u.Pos.Y - u.FocusPoint.Y) * (u.Pos.Y - u.FocusPoint.Y)))){
+		attack = true
 	}
+	if time - lastAttack >= u.Weapon.AttackRate && attack == true{
+		u.Weapon.Fire(u.Pos, u.FocusPoint)
+	}
+}
+
+func (w *Attack) Fire(attackerPos, focusPoint Ve2){
+	//TODO: this whole function
 }
