@@ -244,3 +244,25 @@ func (u *BattleUnit) Ai(time int){
 func (w *Attack) Fire(attackerPos, focusPoint Ve2){
 	//TODO: this whole function
 }
+
+func CompareWorlds(world1, world2 [][]Tile) bool {
+	var toReturn bool
+	if len(world1) != len(world2){
+		toReturn = false
+	} else {
+		for i:=0; i < len(world1); i++{
+			if len(world1[i]) != len(world2[i]){
+				toReturn = false
+			} else {
+				for j:=0; j < len(world1[i]); j++{
+					if world1[i][j] != world2[i][j]{
+						toReturn = false
+					} else {
+						toReturn = true
+					}
+				}
+			}
+		}
+	}
+	return toReturn
+}
