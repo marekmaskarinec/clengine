@@ -84,7 +84,7 @@ type Attack struct {
 
 //changes one specific tile in the world
 func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
-	if pos.X <= 0 || pos.Y <= 0 || pos.X > len(world) || pos.Y > len(world) {
+	if pos.X < 0 || pos.Y < 0 || pos.X > len(world) || pos.Y > len(world) {
 		return nil, errors.New("You entered value smaller than zero")
 	} else {
 		world[pos.X][pos.Y] = t
