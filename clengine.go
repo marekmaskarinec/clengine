@@ -99,6 +99,7 @@ func NewVe2(x, y int) Ve2 {
 
 //changes all tiles in a rectangular shape
 func EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
+	to.Y--
 	if from.X < 0 || from.Y < 0 || to.X < from.X || to.Y < from.Y {
 		return nil, errors.New("Invalid number")
 	} else {
