@@ -92,7 +92,7 @@ func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 	}
 }
 
-func EditLine(world [][]Tile, from, to Ve2, t Tile) ([][]Tile, error){
+/*func EditLine(world [][]Tile, from, to Ve2, t Tile) ([][]Tile, error){
 	if from.X < 0 || from.Y < 0 || to.X < from.X || to.Y < from.Y {
 		return nil, errors.New("Invalid number")
 	} else {
@@ -100,12 +100,29 @@ func EditLine(world [][]Tile, from, to Ve2, t Tile) ([][]Tile, error){
 
 		}
 	}
+}*/
+
+func CutWorld(world [][]Tile, from Ve2, to Ve2) ([][]Tile, error) {
+	if from.X+to.X < len(world) && from.Y+to.Y < len(world[0]) {
+		var toReturn [][]Tile
+		var toAppend []Tile
+		for i := from.X; i < from.Y+to.X; i++ {
+			toReturn = append(toReturn, toAppend)
+			for j := from.Y; j < from.Y+to.Y; j++ {
+				toReturn[i] = append(toReturn[i], world[i][j])
+			}
+		}
+		return toReturn, nil
+	} else {
+		return world, errors.New("cut: Out of boundaries")
+	}
 }
 
 //returns new Ve2
 func NewVe2(x, y int) Ve2 {
 	return Ve2{X: x, Y: y}
 }
+
 //changes all tiles in a rectangular shape
 func EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
 	to.Y--
@@ -202,7 +219,7 @@ func DrawWorld(world [][]Tile) {
 	for i := 0; i < len(world); i++ {
 		for j := 0; j < len(world[0]); j++ {
 			c = world[i][j]
-			if c.Color == "blnk"{
+			if c.Color == "blnk" {
 				fmt.Print(c.Tile)
 			} else {
 				col = color.New(palette[c.Color])
