@@ -92,11 +92,20 @@ func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 	}
 }
 
+func EditLine(world [][]Tile, from, to Ve2, t Tile) ([][]Tile, error){
+	if from.X < 0 || from.Y < 0 || to.X < from.X || to.Y < from.Y {
+		return nil, errors.New("Invalid number")
+	} else {
+		if to.X >= to.Y{
+
+		}
+	}
+}
+
 //returns new Ve2
 func NewVe2(x, y int) Ve2 {
 	return Ve2{X: x, Y: y}
 }
-
 //changes all tiles in a rectangular shape
 func EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
 	to.Y--
@@ -193,8 +202,12 @@ func DrawWorld(world [][]Tile) {
 	for i := 0; i < len(world); i++ {
 		for j := 0; j < len(world[0]); j++ {
 			c = world[i][j]
-			col = color.New(palette[c.Color])
-			col.Print(c.Tile)
+			if c.Color == "blnk"{
+				fmt.Print(c.Tile)
+			} else {
+				col = color.New(palette[c.Color])
+				col.Print(c.Tile)
+			}
 		}
 		fmt.Println("")
 	}
