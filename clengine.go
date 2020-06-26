@@ -103,13 +103,13 @@ func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 }*/
 
 func CutWorld(world [][]Tile, from Ve2, to Ve2) ([][]Tile, error) {
-	if from.X+to.X < len(world) && from.Y+to.Y < len(world[0]) {
+	if from.X+to.X <= len(world) && from.Y+to.Y <= len(world[0]) {
 		var toReturn [][]Tile
 		var toAppend []Tile
-		for i := from.X; i < from.Y+to.X; i++ {
+		for i := 0; i < to.X; i++ {
 			toReturn = append(toReturn, toAppend)
-			for j := from.Y; j < from.Y+to.Y; j++ {
-				toReturn[i] = append(toReturn[i], world[i][j])
+			for j := 0; j < to.Y; j++ {
+				toReturn[i] = append(toReturn[i], world[i+from.X][j+from.Y])
 			}
 		}
 		return toReturn, nil
