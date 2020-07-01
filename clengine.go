@@ -82,6 +82,11 @@ type Attack struct {
 	AttackRate int
 }
 
+type Layer struct {
+	World [][]Tile
+	Pos   Ve2
+}
+
 //changes one specific tile in the world
 func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 	if pos.X < 0 || pos.Y < 0 || pos.X > len(world) || pos.Y > len(world) {
@@ -119,7 +124,7 @@ func CutWorld(world [][]Tile, from Ve2, to Ve2) ([][]Tile, error) {
 }
 
 //returns new Ve2
-func NewVe2(x, y int) Ve2 {
+func V2(x, y int) Ve2 {
 	return Ve2{X: x, Y: y}
 }
 
@@ -239,6 +244,17 @@ func palette() map[string]color.Attribute {
 	colors["red"] = color.FgRed
 	colors["cyan"] = color.FgCyan
 	return colors
+}
+
+func ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
+	for i := 0; i < len(layers); i++ {
+		for j := 0; j < len(layers[i].World); j++ {
+			for k := 0; k < len(layers[i].World[0]); k++ {
+				world[layers[i].Pos.X+j][layers[i].Pos.Y+k] = layers[i].World[j][k]
+			}
+		}
+	}
+	return world, nil
 }
 
 func (u *BattleUnit) Ai(time int) {
