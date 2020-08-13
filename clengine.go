@@ -186,7 +186,7 @@ func SaveWorld(world [][]Tile, path string) {
 }
 
 //loads world from file
-func LoadWorld(path string) {
+func LoadWorld(path string) [][]Tile {
 	var world [][]Tile
 	text := []string{}
 	var damage, x, y int
@@ -215,6 +215,7 @@ func LoadWorld(path string) {
 		world[x][y] = Tile{Name: text[i+2], Tile: text[i+3], Damage: damage, Color: text[i+5]}
 		i += 5
 	}
+	return world
 }
 
 //prints out the world to terminal
