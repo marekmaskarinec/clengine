@@ -186,7 +186,8 @@ func SaveWorld(world [][]Tile, path string) {
 }
 
 //loads world from file
-func LoadWorld(path string, world *[][]Tile) {
+func LoadWorld(path string) {
+	var world [][]Tile
 	text := []string{}
 	var damage, x, y int
 
@@ -205,13 +206,13 @@ func LoadWorld(path string, world *[][]Tile) {
 		damage, _ = strconv.Atoi(text[i+4])
 		x, _ = strconv.Atoi(text[i])
 		y, _ = strconv.Atoi(text[i+1])
-		for len(*world) <= x {
-			(*world) = append(*world, make([]Tile, 0))
+		for len(world) <= x {
+			world = append(world, make([]Tile, 0))
 		}
-		for len((*world)[x]) <= y {
-			(*world)[x] = append((*world)[x], Tile{})
+		for len(world[x]) <= y {
+			world[x] = append(world[x], Tile{})
 		}
-		(*world)[x][y] = Tile{Name: text[i+2], Tile: text[i+3], Damage: damage, Color: text[i+5]}
+		world[x][y] = Tile{Name: text[i+2], Tile: text[i+3], Damage: damage, Color: text[i+5]}
 		i += 5
 	}
 }
