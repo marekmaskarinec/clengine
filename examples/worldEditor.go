@@ -1,15 +1,15 @@
 package main
 
-import(
-	"fmt"
+import (
 	"clengine"
-	"strings"
-	"strconv"
-	"os/exec"
+	"fmt"
 	"os"
+	"os/exec"
+	"strconv"
+	"strings"
 )
 
-func main(){
+func main() {
 	var in string = "0"
 	var pos1, pos2 clengine.Ve2
 	var t clengine.Tile
@@ -22,13 +22,13 @@ func main(){
 	fmt.Println("insert world file location:")
 	fmt.Scanln(&in)
 	cmd.Run()
-	clengine.LoadWorld(in, &world)
+	world = clengine.LoadWorld(in)
 	fmt.Println("world loaded")
 	fmt.Println("h: help\ne: edit tile\nq: quit\ns: save\nd: draw")
 
-	for{
+	for {
 		fmt.Scanln(&in)
-		if strings.ToLower(in) == "e"{
+		if strings.ToLower(in) == "e" {
 			cmd.Run()
 			//getting tile position
 			fmt.Println("Set x position:")
@@ -49,34 +49,34 @@ func main(){
 			cmd.Run()
 
 			world, err = clengine.EditTile(world, pos1, t)
-			if err != nil{
+			if err != nil {
 				fmt.Println(err)
 				panic(err)
 			}
 			clengine.DrawWorld(world)
-		} else if strings.ToLower(in) == "q"{
+		} else if strings.ToLower(in) == "q" {
 			break
-		} else if strings.ToLower(in) == "s"{
+		} else if strings.ToLower(in) == "s" {
 			fmt.Println("set filename:")
 			fmt.Scanln(&in)
-			if in != ""{
+			if in != "" {
 				clengine.SaveWorld(world, in)
 			} else {
 				clengine.SaveWorld(world, "out.txt")
 			}
 			fmt.Println("world saved")
-		} else if strings.ToLower(in) == "d"{
+		} else if strings.ToLower(in) == "d" {
 			clengine.DrawWorld(world)
-		} else if strings.ToLower(in) == "o"{
+		} else if strings.ToLower(in) == "o" {
 			fmt.Println("set file location:")
 			fmt.Scanln(&in)
-			if in != ""{
+			if in != "" {
 				clengine.LoadWorld(in, &world)
 			} else {
 				fmt.Println("no location set")
 			}
 			fmt.Println("world loaded")
-		} else if strings.ToLower(in) == "r"{
+		} else if strings.ToLower(in) == "r" {
 			cmd.Run()
 			//getting tile position
 			fmt.Println("Set start x position:")

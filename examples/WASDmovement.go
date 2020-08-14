@@ -34,7 +34,7 @@ func main() {
 	var err error
 	//defining game variables
 	g := game{}                               //creating new game
-	clengine.LoadWorld("world.txt", &g.world) //loading world
+	g.world = clengine.LoadWorld("world.txt") //loading world
 	g.player = clengine.Tile{Tile: "X"}       //creating player tile
 	g.pp = clengine.V2(0, 0)                  //setting player's position
 	//g.world, err = clengine.EditWorld(g.world, clengine.NewVe2(0, 0), clengine.NewVe2(2, 2), clengine.Tile{Tile: "^", Color: "blue"})
