@@ -89,11 +89,12 @@ type Layer struct {
 
 //changes one specific tile in the world
 func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
-	if pos.X < 0 || pos.Y < 0 || pos.X > len(world) || pos.Y > len(world) {
-		return nil, errors.New("You entered value smaller than zero")
+	w := DuplicateWorld(world)
+	if pos.X < 0 || pos.Y < 0 || pos.X > len(w) || pos.Y > len(w) {
+		return w, errors.New("You entered value smaller than zero")
 	} else {
-		world[pos.X][pos.Y] = t
-		return world, nil
+		w[pos.X][pos.Y] = t
+		return w, nil
 	}
 }
 
@@ -183,6 +184,18 @@ func SaveWorld(world [][]Tile, path string) {
 		}
 	}
 	ioutil.WriteFile(path, []byte(toWrite), 0644)
+}
+
+func DuplicateWorld(w [][]Tile) [][]Tile {
+	var nw [][]Tile
+
+	for i := 0; i < len(w); i++ {
+		nw = append(nw, make([]Tile, 0))
+		for j := 0; j < len(w[i]); j++ {
+			nw[i] = append(nw[i], w[i][j])
+		}
+	}
+	return nw
 }
 
 //loads world from file
