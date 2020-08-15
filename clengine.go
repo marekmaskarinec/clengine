@@ -129,6 +129,11 @@ func V2(x, y int) Ve2 {
 	return Ve2{X: x, Y: y}
 }
 
+func (v1 *Ve2) Add(v2 Ve2) {
+	v1.X += v2.X
+	v1.Y += v2.Y
+}
+
 //changes all tiles in a rectangular shape
 func EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
 	to.Y--
