@@ -136,22 +136,21 @@ func (v1 *Ve2) Add(v2 Ve2) {
 
 //changes all tiles in a rectangular shape
 func EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
-	to.Y--
 	if from.X < 0 || from.Y < 0 || to.X < from.X || to.Y < from.Y {
-		return nil, errors.New("Invalid number")
+		return world, errors.New("Invalid number")
 	} else {
 		for len(world) <= from.X+to.X {
 			world = append(world, make([]Tile, 0))
 		}
 		for i := 0; i <= to.X; i++ {
-			for len(world[from.X+i]) <= from.Y+to.Y {
+			for len(world[from.X+i]) <= from.Y+to.Y-1 {
 				//fmt.Println("x")
 				world[from.X+i] = append(world[from.X+i], Tile{})
 			}
 		}
 
 		for i := 0; i < to.X; i++ {
-			for r := 0; r <= to.Y; r++ {
+			for r := 0; r < to.Y; r++ {
 				world[from.X+i][from.Y+r] = tile
 			}
 		}
