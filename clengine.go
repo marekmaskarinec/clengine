@@ -262,6 +262,9 @@ func palette() map[string]color.Attribute {
 	colors["blue"] = color.FgBlue
 	colors["red"] = color.FgRed
 	colors["cyan"] = color.FgCyan
+	colors["black"] = color.FgBlack
+	colors["white"] = color.FgWhite
+	colors["magenta"] = color.FgMagenta
 	return colors
 }
 
