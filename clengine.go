@@ -266,14 +266,15 @@ func palette() map[string]color.Attribute {
 }
 
 func ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
+	w := DuplicateWorld(world)
 	for i := 0; i < len(layers); i++ {
 		for j := 0; j < len(layers[i].World); j++ {
 			for k := 0; k < len(layers[i].World[0]); k++ {
-				world[layers[i].Pos.X+j][layers[i].Pos.Y+k] = layers[i].World[j][k]
+				w[layers[i].Pos.X+j][layers[i].Pos.Y+k] = layers[i].World[j][k]
 			}
 		}
 	}
-	return world, nil
+	return w, nil
 }
 
 func (u *BattleUnit) Ai(time int) {
