@@ -2,6 +2,7 @@ package clengine
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -190,6 +191,13 @@ func SaveWorld(world [][]Tile, path string) {
 	ioutil.WriteFile(path, []byte(toWrite), 0644)
 }
 
+func SaveWorldJSON(w [][]Tile, path string) {
+	toSave, err := json.Marshal(w)
+	if err == nil {
+		ioutil.WriteFile(path, toSave, 0644)
+	}
+}
+
 func DuplicateWorld(w [][]Tile) [][]Tile {
 	var nw [][]Tile
 
@@ -233,6 +241,18 @@ func LoadWorld(path string) [][]Tile {
 		i += 5
 	}
 	return world
+}
+
+func LoadWorldJSON(path string) [][]Tile {
+	var w [][]Tile
+
+	file, err := ioutil.ReadFile(path)
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.Unmarshal(file, &w)
+	return w
 }
 
 //prints out the world to terminal
