@@ -55,10 +55,11 @@ type Character struct {
 }
 
 type Tile struct {
-	Name   string
-	Tile   string
-	Damage int
-	Color  string
+	Name    string
+	Tile    string
+	Damage  int
+	Color   string
+	BgColor string
 }
 
 type Ve2 struct {
@@ -259,6 +260,7 @@ func LoadWorldJSON(path string) [][]Tile {
 func DrawWorld(world [][]Tile) {
 	var c Tile
 	palette := palette()
+	bgPalette := bgPalette()
 	col := color.New(color.FgWhite)
 	for i := 0; i < len(world); i++ {
 		for j := 0; j < len(world[0]); j++ {
@@ -266,7 +268,11 @@ func DrawWorld(world [][]Tile) {
 			if c.Color == "blnk" {
 				fmt.Print(c.Tile)
 			} else {
-				col = color.New(palette[c.Color])
+				if c.BgColor != "" {
+					col = color.New(palette[c.Color], bgPalette[c.BgColor])
+				} else {
+					col = color.New(palette[c.Color])
+				}
 				col.Print(c.Tile)
 			}
 		}
@@ -285,6 +291,19 @@ func palette() map[string]color.Attribute {
 	colors["black"] = color.FgBlack
 	colors["white"] = color.FgWhite
 	colors["magenta"] = color.FgMagenta
+	return colors
+}
+
+func bgPalette() map[string]color.Attribute {
+	colors := make(map[string]color.Attribute)
+	colors["green"] = color.BgGreen
+	colors["yellow"] = color.BgYellow
+	colors["blue"] = color.BgBlue
+	colors["red"] = color.BgRed
+	colors["cyan"] = color.BgCyan
+	colors["black"] = color.BgBlack
+	colors["white"] = color.BgWhite
+	colors["magenta"] = color.BgMagenta
 	return colors
 }
 
