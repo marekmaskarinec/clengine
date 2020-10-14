@@ -308,11 +308,18 @@ func bgPalette() map[string]color.Attribute {
 }
 
 func ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
+	var color string
 	w := DuplicateWorld(world)
 	for i := 0; i < len(layers); i++ {
 		for j := 0; j < len(layers[i].World); j++ {
 			for k := 0; k < len(layers[i].World[0]); k++ {
-				w[layers[i].Pos.X+j][layers[i].Pos.Y+k] = layers[i].World[j][k]
+				if layers[i].World[j][k].BgColor == "" {
+					color = w[layers[i].Pos.X+j][layers[i].Pos.Y+k].BgColor
+					w[layers[i].Pos.X+j][layers[i].Pos.Y+k] = layers[i].World[j][k]
+					w[layers[i].Pos.X+j][layers[i].Pos.Y+k].BgColor = color
+				} else {
+					w[layers[i].Pos.X+j][layers[i].Pos.Y+k] = layers[i].World[j][k]
+				}
 			}
 		}
 	}
