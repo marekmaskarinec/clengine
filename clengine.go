@@ -1,6 +1,7 @@
 package clengine
 
 import (
+	"bytes"
 	"bufio"
 	"encoding/json"
 	"errors"
@@ -9,6 +10,8 @@ import (
 	"math"
 	"os"
 	"strconv"
+	"os/exec"
+	"strings"
 
 	"github.com/fatih/color"
 )
@@ -110,6 +113,53 @@ func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 	}
 }*/
 
+func getSize() (int, int) {
+	cmd := exec.Command("stty", "size")
+	cmd.Stdin = os.Stdin
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		fmt.Printf("getting terminal size: %s\n", err)
+	}
+
+	outStr := strings.Split(out.String(), " ")
+	wString := strings.Split(outStr[1], "\n")
+	h, err := strconv.Atoi(outStr[0])
+	w, err := strconv.Atoi(wString[0])
+	if err != nil {
+		fmt.Printf("getting terminal size: %s", err)
+	}
+
+	return h, w
+}
+
+//Draws world on the center of the screen
+func DrawCentered(w [][]Tile) {
+	he, wi := getSize()
+	var rows, colls, wwidth int
+	//var toPrint string
+	var currentRow [][]Tile
+	currentRow = append(currentRow, make([]Tile, 0))
+
+	rows = (he-len(w))/2
+
+	//first row has to be the longest
+	//TODO: first row doesnt have to be the longest
+	for i := range w[0] {
+		wwidth += len(w[0][i].Tile)
+	}
+	colls = (wi-wwidth)/2
+
+	fmt.Println(strings.Repeat("\n", rows))
+	for i:=0; i<len(w); i++ {
+		fmt.Print(strings.Repeat(" ", colls))
+		currentRow[0] = w[i]
+		DrawWorld(currentRow)
+	}
+}
+
+//makes cut from the world
 func CutWorld(world [][]Tile, from Ve2, to Ve2) ([][]Tile, error) {
 	if from.X+to.X <= len(world) && from.Y+to.Y <= len(world[0]) {
 		var toReturn [][]Tile
