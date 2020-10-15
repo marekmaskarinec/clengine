@@ -113,6 +113,7 @@ func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 	}
 }*/
 
+//Gets size of terminal window
 func GetSize() (int, int) {
 	cmd := exec.Command("stty", "size")
 	cmd.Stdin = os.Stdin
@@ -135,7 +136,8 @@ func GetSize() (int, int) {
 }
 
 //Draws world on the center of the screen
-func DrawCentered(w [][]Tile) {
+//can get additional blank margin for user input in ui
+func DrawCentered(w [][]Tile, additionalRow bool) {
 	he, wi := getSize()
 	var rows, colls, wwidth int
 	//var toPrint string
@@ -156,6 +158,9 @@ func DrawCentered(w [][]Tile) {
 		fmt.Print(strings.Repeat(" ", colls))
 		currentRow[0] = w[i]
 		DrawWorld(currentRow)
+	}
+	if additionalRow {
+		fmt.Print(strings.Repeat(" ", colls))
 	}
 }
 
