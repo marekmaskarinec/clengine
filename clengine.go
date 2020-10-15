@@ -113,7 +113,7 @@ func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 	}
 }*/
 
-func getSize() (int, int) {
+func GetSize() (int, int) {
 	cmd := exec.Command("stty", "size")
 	cmd.Stdin = os.Stdin
 	var out bytes.Buffer
