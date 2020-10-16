@@ -138,7 +138,7 @@ func GetSize() (int, int) {
 //Draws world on the center of the screen
 //can get additional blank margin for user input in ui
 func DrawCentered(w [][]Tile, additionalRow bool) {
-	he, wi := getSize()
+	he, wi := GetSize()
 	var rows, colls, wwidth int
 	//var toPrint string
 	var currentRow [][]Tile
