@@ -98,7 +98,7 @@ func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 	if pos.X < 0 || pos.Y < 0{
 		return w, errors.New("You entered value smaller than zero")
 	} else {
-		for len(w)<= pos.X{
+		for len(w) <= pos.X{
 			w = append(w, make([]Tile, 0))
 		}
 		for len(w[pos.X]) <= pos.Y {
