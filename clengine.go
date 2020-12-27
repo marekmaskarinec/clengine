@@ -192,6 +192,7 @@ func V2(x, y int) Ve2 {
 	return Ve2{X: x, Y: y}
 }
 
+//Adds on Ve2 to another
 func (v1 *Ve2) Add(v2 Ve2) {
 	v1.X += v2.X
 	v1.Y += v2.Y
@@ -324,7 +325,7 @@ func DrawWorld(world [][]Tile) {
 	bgPalette := bgPalette()
 	col := color.New(color.FgWhite)
 	for i := 0; i < len(world); i++ {
-		for j := 0; j < len(world[0]); j++ {
+		for j := 0; j < len(world[i]); j++ {
 			c = world[i][j]
 			if c.Color == "blnk" {
 				fmt.Print(c.Tile)
@@ -368,6 +369,7 @@ func bgPalette() map[string]color.Attribute {
 	return colors
 }
 
+//Adds layers to a world
 func ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
 	var color string
 	w := DuplicateWorld(world)
@@ -422,6 +424,7 @@ func (w *Attack) Fire(attackerPos, focusPoint Ve2) {
 	//TODO: this whole function
 }
 
+//Compares if worlds are the same
 func CompareWorlds(world1, world2 [][]Tile) bool {
 	var toReturn bool
 	if len(world1) != len(world2) {
@@ -442,4 +445,22 @@ func CompareWorlds(world1, world2 [][]Tile) bool {
 		}
 	}
 	return toReturn
+}
+
+// Converts an array of colors into a world of halfblocks. Final world should be used as layer.
+func ParsePixMap(pix [][]string) [][]Tile {
+	w := [][]Tile{}
+	for x := range pix {
+		w = append(w, []Tile{})
+		for y := range pix[x] {
+			fmt.Println(w)
+			if x % 2 == 0 {
+				fmt.Println("odd")
+				w[x] = append(w[x], Tile{Tile: "▀", Color: pix[x][y]})	
+			} else {
+				w[x/2][y].BgColor = pix[x][y]
+			}
+		}
+	}
+	return w
 }
