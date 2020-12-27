@@ -464,3 +464,16 @@ func ParsePixMap(pix [][]string) [][]Tile {
 	}
 	return w
 }
+
+func WorldToPixMap(w [][]Tile) [][]string {
+	pix := [][]string{}
+
+	for x := range w {
+		pix = append(pix, []string{})
+		for y := range w[x] {
+			pix[x*2] = append(pix[x], w[x][y].Color)
+			pix[x*2+1] = append(pix[x+1], w[x][y].BgColor)
+		}
+	}
+	return pix
+}
