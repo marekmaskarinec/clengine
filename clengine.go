@@ -451,12 +451,14 @@ func CompareWorlds(world1, world2 [][]Tile) bool {
 func ParsePixMap(pix [][]string) [][]Tile {
 	w := [][]Tile{}
 	for x := range pix {
+		if x % 2 == 0 {
+			w = append(w, []Tile{})
+		}
 		for y := range pix[x] {
 			if x % 2 == 0 {
-				w = append(w, []Tile{})
 				w[x/2] = append(w[x/2], Tile{Tile: "▀", Color: pix[x][y]})	
 			} else {
-				w[x/2][y].BgColor = pix[x][y]
+				w[x/2][y].BgColor = pix[x][y]	
 			}
 		}
 	}
@@ -469,8 +471,7 @@ func WorldToPixMap(w [][]Tile) [][]string {
 	for x := range w {
 		pix = append(pix, []string{})
 		for y := range w[x] {
-			pix[x*2] = append(pix[x], w[x][y].Color)
-			pix[x*2+1] = append(pix[x+1], w[x][y].BgColor)
+			pix[x] = append(pix[x], w[x][y].Color)
 		}
 	}
 	return pix
