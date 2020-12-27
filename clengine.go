@@ -451,11 +451,9 @@ func CompareWorlds(world1, world2 [][]Tile) bool {
 func ParsePixMap(pix [][]string) [][]Tile {
 	w := [][]Tile{}
 	for x := range pix {
-		fmt.Println(w)
 		for y := range pix[x] {
 			if x % 2 == 0 {
 				w = append(w, []Tile{})
-				fmt.Println("odd")
 				w[x/2] = append(w[x/2], Tile{Tile: "▀", Color: pix[x][y]})	
 			} else {
 				w[x/2][y].BgColor = pix[x][y]
