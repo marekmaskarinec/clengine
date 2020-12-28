@@ -17,47 +17,6 @@ import (
 	"github.com/fatih/color"
 )
 
-type Player struct {
-	Hp      int
-	Defense int
-	Inv     Inventory
-	Name    string
-	Money   int
-	Quests  []Quest
-	Tile    Tile
-	Pos     Ve2
-}
-
-type Inventory struct {
-	WeightLimit int
-	Items       []Item
-}
-
-type Item struct {
-	AvgPrice   int
-	Weight     int
-	Durability int
-	Attack     int
-	CanBuild   bool
-	Stolen     bool
-	Legal      bool
-}
-
-type Quest struct {
-	accepted      int
-	end           int
-	timeToFinnish int
-	requester     Character
-	message       string
-	toDo          bool
-	legal         bool
-}
-
-type Character struct {
-	name  string
-	money int
-}
-
 type Tile struct {
 	Name    string
 	Tile    string
@@ -71,30 +30,14 @@ type Ve2 struct {
 	Y int
 }
 
-type BattleUnit struct {
-	Name       string
-	Tile       Tile
-	Pos        Ve2
-	FocusPoint Ve2
-	Health     int
-	Weapon     Attack
-	Distance   int
-}
-
-type Attack struct {
-	Name       string
-	Tile       Tile
-	Damage     int
-	AttackRate int
-}
-
 type Layer struct {
 	World [][]Tile
 	Pos   Ve2
 }
 
-//Changes one specific tile in the world. Can append tiles.
-func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
+/*Changes one specific tile in the world. Can append tiles.*/
+func
+EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 	w := DuplicateWorld(world)
 	if pos.X < 0 || pos.Y < 0{
 		return w, errors.New("You entered value smaller than zero")
@@ -120,8 +63,9 @@ func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 	}
 }*/
 
-//Gets size of terminal window
-func GetSize() (int, int) {
+/*Gets size of terminal window*/
+func
+GetSize() (int, int) {
 	cmd := exec.Command("stty", "size")
 	cmd.Stdin = os.Stdin
 	var out bytes.Buffer
@@ -142,19 +86,18 @@ func GetSize() (int, int) {
 	return h, w
 }
 
-//Draws world on the center of the screen
-//can get additional blank margin for user input in ui
-func DrawCentered(w [][]Tile, additionalRow bool) {
+/*Draws world on the center of the screen
+can get additional blank margin for user input in ui*/
+func
+DrawCentered(w [][]Tile, additionalRow bool) {
 	he, wi := GetSize()
 	var rows, colls, wwidth int
-	//var toPrint string
 	var currentRow [][]Tile
 	currentRow = append(currentRow, make([]Tile, 0))
 
 	rows = (he-len(w))/2
 
-	//first row has to be the longest
-	//TODO: first row doesnt have to be the longest
+	/*first row has to be the longest*/
 	for i := range w[0] {
 		wwidth += len(w[0][i].Tile)
 	}
@@ -171,8 +114,9 @@ func DrawCentered(w [][]Tile, additionalRow bool) {
 	}
 }
 
-//makes cut from the world
-func CutWorld(world [][]Tile, from Ve2, to Ve2) ([][]Tile, error) {
+/*makes cut from the world*/
+func
+CutWorld(world [][]Tile, from Ve2, to Ve2) ([][]Tile, error) {
 	if from.X+to.X <= len(world) && from.Y+to.Y <= len(world[0]) {
 		var toReturn [][]Tile
 		var toAppend []Tile
@@ -188,19 +132,22 @@ func CutWorld(world [][]Tile, from Ve2, to Ve2) ([][]Tile, error) {
 	}
 }
 
-//returns new Ve2
-func V2(x, y int) Ve2 {
+/*returns new Ve2*/
+func
+V2(x, y int) Ve2 {
 	return Ve2{X: x, Y: y}
 }
 
-//Adds on Ve2 to another
-func (v1 *Ve2) Add(v2 Ve2) {
+/*Adds on Ve2 to another*/
+func
+(v1 *Ve2) Add(v2 Ve2) {
 	v1.X += v2.X
 	v1.Y += v2.Y
 }
 
-//changes all tiles in a rectangular shape
-func EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
+/*changes all tiles in a rectangular shape*/
+func
+EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
 	if from.X < 0 || from.Y < 0 || to.X < from.X || to.Y < from.Y {
 		return world, errors.New("Invalid number")
 	} else {
@@ -223,27 +170,9 @@ func EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
 	}
 }
 
-//returns, how much does the inventory weight
-func InventoryWeight(inv Inventory) int {
-	var weight int
-	for i := 0; i < len(inv.Items); i++ {
-		weight += inv.Items[i].Weight
-	}
-	return weight
-}
-
-//adds item to inventory and automaticaly checks weight
-func AddToInventory(inv Inventory, toAdd Item) (int, error) {
-	if InventoryWeight(inv) < inv.WeightLimit {
-		inv.Items = append(inv.Items, toAdd)
-		return InventoryWeight(inv), nil
-	} else {
-		return InventoryWeight(inv), errors.New("The item weights too much for you to cary.")
-	}
-}
-
-//saves world to a text file
-func SaveWorld(world [][]Tile, path string) {
+/*saves world to a text file*/
+func
+SaveWorld(world [][]Tile, path string) {
 	var c Tile
 	var toWrite string
 	for i := 0; i < len(world); i++ {
@@ -255,14 +184,16 @@ func SaveWorld(world [][]Tile, path string) {
 	ioutil.WriteFile(path, []byte(toWrite), 0644)
 }
 
-func SaveWorldJSON(w [][]Tile, path string) {
+func
+SaveWorldJSON(w [][]Tile, path string) {
 	toSave, err := json.Marshal(w)
 	if err == nil {
 		ioutil.WriteFile(path, toSave, 0644)
 	}
 }
 
-func DuplicateWorld(w [][]Tile) [][]Tile {
+func
+DuplicateWorld(w [][]Tile) [][]Tile {
 	var nw [][]Tile
 
 	for i := 0; i < len(w); i++ {
@@ -274,8 +205,9 @@ func DuplicateWorld(w [][]Tile) [][]Tile {
 	return nw
 }
 
-//loads world from file
-func LoadWorld(path string) [][]Tile {
+/*loads world from file*/
+func
+LoadWorld(path string) [][]Tile {
 	var world [][]Tile
 	text := []string{}
 	var damage, x, y int
@@ -307,7 +239,8 @@ func LoadWorld(path string) [][]Tile {
 	return world
 }
 
-func LoadWorldJSON(path string) [][]Tile {
+func
+LoadWorldJSON(path string) [][]Tile {
 	var w [][]Tile
 
 	file, err := ioutil.ReadFile(path)
@@ -319,8 +252,9 @@ func LoadWorldJSON(path string) [][]Tile {
 	return w
 }
 
-//prints out the world to terminal
-func DrawWorld(world [][]Tile) {
+/*prints out the world to terminal*/
+func
+DrawWorld(world [][]Tile) {
 	var c Tile
 	palette := palette()
 	bgPalette := bgPalette()
@@ -343,8 +277,9 @@ func DrawWorld(world [][]Tile) {
 	}
 }
 
-//returns color palette
-func palette() map[string]color.Attribute {
+/*returns color palette*/
+func
+palette() map[string]color.Attribute {
 	colors := make(map[string]color.Attribute)
 	colors["green"] = color.FgGreen
 	colors["yellow"] = color.FgYellow
@@ -357,7 +292,8 @@ func palette() map[string]color.Attribute {
 	return colors
 }
 
-func bgPalette() map[string]color.Attribute {
+func
+bgPalette() map[string]color.Attribute {
 	colors := make(map[string]color.Attribute)
 	colors["green"] = color.BgGreen
 	colors["yellow"] = color.BgYellow
@@ -370,8 +306,9 @@ func bgPalette() map[string]color.Attribute {
 	return colors
 }
 
-//Adds layers to a world
-func ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
+/*Adds layers to a world*/
+func
+ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
 	var color string
 	w := DuplicateWorld(world)
 	for i := 0; i < len(layers); i++ {
@@ -390,43 +327,9 @@ func ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
 	return w, nil
 }
 
-func (u *BattleUnit) Ai(time int) {
-	attack := false
-	lastAttack := 0
-	if attack == false {
-		if u.Pos.X < u.FocusPoint.X {
-			if time%500 == 0 {
-				u.Pos.X += 1
-			}
-		} else if u.Pos.X > u.FocusPoint.X {
-			if time%500 == 0 {
-				u.Pos.X -= 1
-			}
-		}
-		if u.Pos.Y < u.FocusPoint.Y {
-			if time%500 == 0 {
-				u.Pos.Y += 1
-			}
-		} else if u.Pos.Y > u.FocusPoint.Y {
-			if time%500 == 0 {
-				u.Pos.Y -= 1
-			}
-		}
-	}
-	if float64(u.Distance) <= math.Sqrt(float64(((u.Pos.X-u.FocusPoint.X)*(u.Pos.X-u.FocusPoint.X))-((u.Pos.Y-u.FocusPoint.Y)*(u.Pos.Y-u.FocusPoint.Y)))) {
-		attack = true
-	}
-	if time-lastAttack >= u.Weapon.AttackRate && attack == true {
-		u.Weapon.Fire(u.Pos, u.FocusPoint)
-	}
-}
-
-func (w *Attack) Fire(attackerPos, focusPoint Ve2) {
-	//TODO: this whole function
-}
-
-//Compares if worlds are the same
-func CompareWorlds(world1, world2 [][]Tile) bool {
+/*Compares if worlds are the same*/
+func
+CompareWorlds(world1, world2 [][]Tile) bool {
 	var toReturn bool
 	if len(world1) != len(world2) {
 		toReturn = false
@@ -448,13 +351,18 @@ func CompareWorlds(world1, world2 [][]Tile) bool {
 	return toReturn
 }
 
-func Animate(num1 *int, num2, duration int) {
-	speed := (num2-*num1)/duration
-	
-	fmt.Println(speed)
-	frequency := 1/speed
-	moveLenght := frequency*speed
-	dir := int(*num1/num2)/int(math.Abs(float64(*num1/num2)))
+/* animates an int. Still doesnt work when duration is smaller, than the difference between the two input numbers*/
+func
+Animate(num1 *int, num2, duration int) {
+	frequency := float64(duration)/math.Abs(float64(*num1-num2))
+	moveLenght := 1
+
+	var dir int
+	if *num1 < num2 {
+		dir = 1
+	} else {
+		dir = -1
+	}
 	
 	for *num1 != num2 {
 		if dir == 1 && *num1 >= num2-moveLenght {
@@ -465,12 +373,13 @@ func Animate(num1 *int, num2, duration int) {
 			return	
 		} else {
 			*num1 += moveLenght*dir
-			time.Sleep(time.Duration(frequency) * time.Second)
+			time.Sleep(time.Duration(frequency) * 1000 * time.Millisecond)
 		}
 	}
 }
-// Converts an array of colors into a world of halfblocks. Final world should be used as layer.
-func ParsePixMap(pix [][]string) [][]Tile {
+/* Converts an array of colors into a world of halfblocks. Final world should be used as layer.*/
+func
+ParsePixMap(pix [][]string) [][]Tile {
 	w := [][]Tile{}
 	for x := range pix {
 		if x % 2 == 0 {
@@ -487,7 +396,8 @@ func ParsePixMap(pix [][]string) [][]Tile {
 	return w
 }
 
-func WorldToPixMap(w [][]Tile) [][]string {
+func
+WorldToPixMap(w [][]Tile) [][]string {
 	pix := [][]string{}
 
 	for x := range w {
