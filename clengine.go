@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/fatih/color"
 )
@@ -442,4 +443,26 @@ func CompareWorlds(world1, world2 [][]Tile) bool {
 		}
 	}
 	return toReturn
+}
+
+func Animate(num1 *int, num2, duration int) {
+	speed := (num2-*num1)/duration
+	
+	fmt.Println(speed)
+	frequency := 1/speed
+	moveLenght := frequency*speed
+	dir := int(*num1/num2)/int(math.Abs(float64(*num1/num2)))
+	
+	for *num1 != num2 {
+		if dir == 1 && *num1 >= num2-moveLenght {
+			*num1 = num2
+			return
+		} else if dir == -1 && *num1 <= num2+moveLenght {
+			*num1 = num2
+			return	
+		} else {
+			*num1 += moveLenght*dir
+			time.Sleep(time.Duration(frequency) * time.Second)
+		}
+	}
 }
