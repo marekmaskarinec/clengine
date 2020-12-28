@@ -448,7 +448,6 @@ func CompareWorlds(world1, world2 [][]Tile) bool {
 	return toReturn
 }
 
-<<<<<<< HEAD
 func Animate(num1 *int, num2, duration int) {
 	speed := (num2-*num1)/duration
 	
@@ -469,7 +468,7 @@ func Animate(num1 *int, num2, duration int) {
 			time.Sleep(time.Duration(frequency) * time.Second)
 		}
 	}
-=======
+}
 // Converts an array of colors into a world of halfblocks. Final world should be used as layer.
 func ParsePixMap(pix [][]string) [][]Tile {
 	w := [][]Tile{}
@@ -498,5 +497,4 @@ func WorldToPixMap(w [][]Tile) [][]string {
 		}
 	}
 	return pix
->>>>>>> cc5a7244890bc333aa863c63e21887aa59b3c529
 }
