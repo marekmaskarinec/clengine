@@ -1,4 +1,4 @@
-package clengine
+package cliw
 
 import (
 	"bytes"
@@ -14,9 +14,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/nsf/termbox-go"
 	"github.com/fatih/color"
 )
 
+/* Tile is a part of a world. It holds all important info. Name can be used for storing data about it in files. */
 type Tile struct {
 	Name    string
 	Tile    string
@@ -25,6 +27,7 @@ type Tile struct {
 	BgColor string
 }
 
+/* Vector2 but shorter, so you don't have to type :] */
 type Ve2 struct {
 	X int
 	Y int
@@ -35,7 +38,12 @@ type Layer struct {
 	Pos   Ve2
 }
 
-/*Changes one specific tile in the world. Can append tiles.*/
+type PixLayer struct {
+	PixMap [][]string
+	Pos Ve2
+}
+
+/*Changes one specific tile in the world. Can append tiles, if the world is too small.*/
 func
 EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 	w := DuplicateWorld(world)
@@ -145,7 +153,7 @@ func
 	v1.Y += v2.Y
 }
 
-/*changes all tiles in a rectangular shape*/
+/* Changes all tiles in a rectangular shape. Fills the inside of the rectangle. */
 func
 EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
 	if from.X < 0 || from.Y < 0 || to.X < from.X || to.Y < from.Y {
@@ -170,7 +178,7 @@ EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
 	}
 }
 
-/*saves world to a text file*/
+/* Saves world to a text file. Don't use this! Doesn't support background color! */
 func
 SaveWorld(world [][]Tile, path string) {
 	var c Tile
@@ -184,6 +192,8 @@ SaveWorld(world [][]Tile, path string) {
 	ioutil.WriteFile(path, []byte(toWrite), 0644)
 }
 
+/* Saves world to JSON. Use this! */
+
 func
 SaveWorldJSON(w [][]Tile, path string) {
 	toSave, err := json.Marshal(w)
@@ -191,6 +201,8 @@ SaveWorldJSON(w [][]Tile, path string) {
 		ioutil.WriteFile(path, toSave, 0644)
 	}
 }
+
+/* Duplicates a world */
 
 func
 DuplicateWorld(w [][]Tile) [][]Tile {
@@ -205,7 +217,7 @@ DuplicateWorld(w [][]Tile) [][]Tile {
 	return nw
 }
 
-/*loads world from file*/
+/* Loads world from file. This shouldn't be used anymore, but if you have old worlds, you can use this to convert them. Doesn't support background color! */
 func
 LoadWorld(path string) [][]Tile {
 	var world [][]Tile
@@ -238,6 +250,8 @@ LoadWorld(path string) [][]Tile {
 	}
 	return world
 }
+
+/* Loads world from JSON */
 
 func
 LoadWorldJSON(path string) [][]Tile {
@@ -306,7 +320,21 @@ bgPalette() map[string]color.Attribute {
 	return colors
 }
 
-/*Adds layers to a world*/
+func TermboxPalette() map[string]termbox.Attribute {
+	colors := make(map[string]termbox.Attribute)
+	colors["green"] = termbox.ColorGreen
+	colors["yellow"] = termbox.ColorYellow
+	colors["blue"] = termbox.ColorBlue
+	colors["red"] = termbox.ColorRed
+	colors["cyan"] = termbox.ColorCyan
+	colors["black"] = termbox.ColorBlack
+	colors["white"] = termbox.ColorWhite
+	colors["magenta"] = termbox.ColorMagenta
+	return colors
+}
+
+/*Adds world to a world as another layer*/
+
 func
 ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
 	var color string
@@ -328,6 +356,7 @@ ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
 }
 
 /*Compares if worlds are the same*/
+
 func
 CompareWorlds(world1, world2 [][]Tile) bool {
 	var toReturn bool
@@ -351,7 +380,7 @@ CompareWorlds(world1, world2 [][]Tile) bool {
 	return toReturn
 }
 
-/* animates an int. Still doesnt work when duration is smaller, than the difference between the two input numbers*/
+/* Animates an int. Still doesnt work when duration is smaller, than the difference between the two input numbers*/
 func
 Animate(num1 *int, num2, duration int) {
 	frequency := float64(duration)/math.Abs(float64(*num1-num2))
@@ -377,7 +406,9 @@ Animate(num1 *int, num2, duration int) {
 		}
 	}
 }
-/* Converts an array of colors into a world of halfblocks. Final world should be used as layer.*/
+
+/* Converts an array of colors into a world of halfblocks. */
+
 func
 ParsePixMap(pix [][]string) [][]Tile {
 	w := [][]Tile{}
@@ -396,6 +427,8 @@ ParsePixMap(pix [][]string) [][]Tile {
 	return w
 }
 
+/* Converts a world to pixmap */
+
 func
 WorldToPixMap(w [][]Tile) [][]string {
 	pix := [][]string{}
@@ -407,4 +440,108 @@ WorldToPixMap(w [][]Tile) [][]string {
 		}
 	}
 	return pix
+}
+
+/* Same as ReturnWithLayers, but for pixmap. */
+
+func
+ReturnWithPixLayers(pixmap [][]string, layers []PixLayer) [][]string {
+	for i := 0; i < len(layers); i++ {
+		for j := 0; j < len(layers[i].PixMap); j++ {
+			for k := 0; k < len(layers[i].PixMap[j]); k++ {
+				pixmap[layers[i].Pos.X+j][layers[i].Pos.Y+k] = layers[i].PixMap[j][k]
+			}
+		}
+	}
+	return pixmap
+}
+
+/* Duplicates a pixmap. */
+
+func
+DuplicatePix(p1 [][]string) [][]string {
+	p2 := [][]string{}
+	for i := range p1 {
+		p2 = append(p2, []string{})
+		for j := range p1[i] {
+			p2[i] = append(p2[i], p1[i][j])
+		}
+	}
+	fmt.Println(p1)
+	fmt.Println(p2)
+	return p2
+}
+
+
+/* Makes a cut from a pixmap. */
+func
+CutPix(pix [][]string, from Ve2, to Ve2) ([][]string, error) {
+	if from.X < 0 {
+		to.X += from.X*-1
+		from.X = 0
+	}
+	if from.Y < 0 {
+		to.Y += from.Y*-1
+		from.Y = 0
+	}
+	if to.X >= len(pix) {
+		to.X = len(pix)-1
+	}
+	if to.Y >= len(pix[0]) {
+		to.Y = len(pix[0])-1
+	}
+	
+	if /*from.X+to.X <= len(pix) && from.Y+to.Y <= len(pix[0])*/ true {
+		var toReturn [][]string
+		var toAppend []string
+		for i := 0; i < to.X; i++ {
+			if i+from.X >= len(pix) {
+				break
+			}
+			toReturn = append(toReturn, toAppend)
+			for j := 0; j < to.Y; j++ {
+				if j+from.Y >= len(pix[i]) {
+					break
+				}
+				toReturn[i] = append(toReturn[i], pix[i+from.X][j+from.Y])
+			}
+		}
+		return toReturn, nil
+	} else {
+		return pix, errors.New("cut: Out of boundaries")
+	}
+}
+
+
+/* Applies changes using termbox */
+func
+ApplyChanges(w [][]Tile, changes []Ve2, centered bool) {
+	var cTile Tile
+	offset := V2(0,0) 
+	if centered {
+		offset.X, offset.Y = GetSize()
+		offset.X /= 2
+		offset.X -= len(w)
+		offset.Y /= 2
+		offset.Y -= len(w[0])
+	}
+	
+	for i := range changes {
+		cTile = w[changes[i].X][changes[i].Y]
+		termbox.SetCell(changes[i].X+offset.X, changes[i].Y+offset.Y, rune(cTile.Tile[0]), TermboxPalette()[cTile.Color], TermboxPalette()[cTile.BgColor])
+	}	
+}
+
+/* Writes a world to Termbox buffer. You have to Init and Sync termbox yourself. If tile is longer than one character, cliw can deal with it. */
+func
+WriteToTermbox(w [][]Tile) {
+	termbox.Init()
+	defer termbox.Close()
+	for i := range w {
+		for j := range w[i] {
+			/* has to switch x and y */
+			termbox.SetCell(i, j, '▀', TermboxPalette()[w[i][j].Color], TermboxPalette()[w[i][j].BgColor])
+		}
+	}
+	termbox.Sync()
 }

@@ -1,2 +1,2 @@
-# clengine
-Cli canvas library for go.
+# cliw
+Cliw is a canvas library for go.
