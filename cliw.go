@@ -333,14 +333,22 @@ func TermboxPalette() map[string]termbox.Attribute {
 	return colors
 }
 
-/*Adds world to a world as another layer*/
-
+/*Adds world to a world as another layer. Will append tiles if needed. */
 func
 ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
 	var color string
 	w := DuplicateWorld(world)
 	for i := 0; i < len(layers); i++ {
+
+		/* Appending new tiles if needed */
+		for len(layers[i].World)+layers[i].Pos.X > len(w) {
+			w = append(w, []Tile{})
+		}
+		
 		for j := 0; j < len(layers[i].World); j++ {
+			for len(layers[i].World[j])+layers[i].Pos.Y > len(w[j]) {
+				w[j] = append(w[j], Tile{})
+			}
 			for k := 0; k < len(layers[i].World[0]); k++ {
 				if layers[i].World[j][k].BgColor == "" {
 					color = w[layers[i].Pos.X+j][layers[i].Pos.Y+k].BgColor
