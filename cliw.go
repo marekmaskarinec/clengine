@@ -268,7 +268,7 @@ LoadWorldJSON(path string) [][]Tile {
 
 /*prints out the world to terminal*/
 func
-DrawWorld(world [][]Tile) {
+DrawWorldOld(world [][]Tile) {
 	var c Tile
 	palette := palette()
 	bgPalette := bgPalette()
@@ -289,6 +289,24 @@ DrawWorld(world [][]Tile) {
 		}
 		fmt.Println("")
 	}
+}
+
+func
+DrawWorld(w [][]Tile) {
+	var c Tile
+	var tp string
+
+	for i := range w {
+		for j := range w[i] {
+			c = w[i][j]
+			tp += getColor(c.Color, false)+getColor(c.BgColor, true)+c.Tile
+		}
+		if i != len(w)-1 {
+			tp += "\n"		
+		}
+	}
+	fmt.Println(tp)	
+	fmt.Print("\003[37;40m\n")
 }
 
 /*returns color palette*/
