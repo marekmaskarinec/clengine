@@ -1,21 +1,21 @@
 package cliw
 
 import (
-	"bytes"
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"math"
 	"os"
-	"strconv"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 
-	"github.com/nsf/termbox-go"
 	"github.com/fatih/color"
+	"github.com/nsf/termbox-go"
 )
 
 /* Tile is a part of a world. It holds all important info. Name can be used for storing data about it in files. */
@@ -40,17 +40,16 @@ type Layer struct {
 
 type PixLayer struct {
 	PixMap [][]string
-	Pos Ve2
+	Pos    Ve2
 }
 
 /*Changes one specific tile in the world. Can append tiles, if the world is too small.*/
-func
-EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
+func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 	w := DuplicateWorld(world)
-	if pos.X < 0 || pos.Y < 0{
+	if pos.X < 0 || pos.Y < 0 {
 		return w, errors.New("You entered value smaller than zero")
 	} else {
-		for len(w) <= pos.X{
+		for len(w) <= pos.X {
 			w = append(w, make([]Tile, 0))
 		}
 		for len(w[pos.X]) <= pos.Y {
@@ -72,8 +71,7 @@ EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 }*/
 
 /*Gets size of terminal window*/
-func
-GetSize() (int, int) {
+func GetSize() (int, int) {
 	cmd := exec.Command("stty", "size")
 	cmd.Stdin = os.Stdin
 	var out bytes.Buffer
@@ -96,23 +94,22 @@ GetSize() (int, int) {
 
 /*Draws world on the center of the screen
 can get additional blank margin for user input in ui*/
-func
-DrawCentered(w [][]Tile, additionalRow bool) {
+func DrawCentered(w [][]Tile, additionalRow bool) {
 	he, wi := GetSize()
 	var rows, colls, wwidth int
 	var currentRow [][]Tile
 	currentRow = append(currentRow, make([]Tile, 0))
 
-	rows = (he-len(w))/2
+	rows = (he - len(w)) / 2
 
 	/*first row has to be the longest*/
 	for i := range w[0] {
 		wwidth += len(w[0][i].Tile)
 	}
-	colls = (wi-wwidth)/2
+	colls = (wi - wwidth) / 2
 
 	fmt.Println(strings.Repeat("\n", rows))
-	for i:=0; i<len(w); i++ {
+	for i := 0; i < len(w); i++ {
 		fmt.Print(strings.Repeat(" ", colls))
 		currentRow[0] = w[i]
 		DrawWorld(currentRow)
@@ -123,8 +120,7 @@ DrawCentered(w [][]Tile, additionalRow bool) {
 }
 
 /*makes cut from the world*/
-func
-CutWorld(world [][]Tile, from Ve2, to Ve2) ([][]Tile, error) {
+func CutWorld(world [][]Tile, from Ve2, to Ve2) ([][]Tile, error) {
 	if from.X+to.X <= len(world) && from.Y+to.Y <= len(world[0]) {
 		var toReturn [][]Tile
 		var toAppend []Tile
@@ -141,21 +137,18 @@ CutWorld(world [][]Tile, from Ve2, to Ve2) ([][]Tile, error) {
 }
 
 /*returns new Ve2*/
-func
-V2(x, y int) Ve2 {
+func V2(x, y int) Ve2 {
 	return Ve2{X: x, Y: y}
 }
 
 /*Adds on Ve2 to another*/
-func
-(v1 *Ve2) Add(v2 Ve2) {
+func (v1 *Ve2) Add(v2 Ve2) {
 	v1.X += v2.X
 	v1.Y += v2.Y
 }
 
 /* Changes all tiles in a rectangular shape. Fills the inside of the rectangle. */
-func
-EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
+func EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
 	if from.X < 0 || from.Y < 0 || to.X < from.X || to.Y < from.Y {
 		return world, errors.New("Invalid number")
 	} else {
@@ -179,8 +172,7 @@ EditWorld(world [][]Tile, from, to Ve2, tile Tile) ([][]Tile, error) {
 }
 
 /* Saves world to a text file. Don't use this! Doesn't support background color! */
-func
-SaveWorld(world [][]Tile, path string) {
+func SaveWorld(world [][]Tile, path string) {
 	var c Tile
 	var toWrite string
 	for i := 0; i < len(world); i++ {
@@ -194,8 +186,7 @@ SaveWorld(world [][]Tile, path string) {
 
 /* Saves world to JSON. Use this! */
 
-func
-SaveWorldJSON(w [][]Tile, path string) {
+func SaveWorldJSON(w [][]Tile, path string) {
 	toSave, err := json.Marshal(w)
 	if err == nil {
 		ioutil.WriteFile(path, toSave, 0644)
@@ -204,8 +195,7 @@ SaveWorldJSON(w [][]Tile, path string) {
 
 /* Duplicates a world */
 
-func
-DuplicateWorld(w [][]Tile) [][]Tile {
+func DuplicateWorld(w [][]Tile) [][]Tile {
 	var nw [][]Tile
 
 	for i := 0; i < len(w); i++ {
@@ -218,8 +208,7 @@ DuplicateWorld(w [][]Tile) [][]Tile {
 }
 
 /* Loads world from file. This shouldn't be used anymore, but if you have old worlds, you can use this to convert them. Doesn't support background color! */
-func
-LoadWorld(path string) [][]Tile {
+func LoadWorld(path string) [][]Tile {
 	var world [][]Tile
 	text := []string{}
 	var damage, x, y int
@@ -253,8 +242,7 @@ LoadWorld(path string) [][]Tile {
 
 /* Loads world from JSON */
 
-func
-LoadWorldJSON(path string) [][]Tile {
+func LoadWorldJSON(path string) [][]Tile {
 	var w [][]Tile
 
 	file, err := ioutil.ReadFile(path)
@@ -267,8 +255,7 @@ LoadWorldJSON(path string) [][]Tile {
 }
 
 /*prints out the world to terminal*/
-func
-DrawWorldOld(world [][]Tile) {
+func DrawWorldOld(world [][]Tile) {
 	var c Tile
 	palette := palette()
 	bgPalette := bgPalette()
@@ -291,27 +278,25 @@ DrawWorldOld(world [][]Tile) {
 	}
 }
 
-func
-DrawWorld(w [][]Tile) {
+func DrawWorld(w [][]Tile) {
 	var c Tile
 	var tp string
 
 	for i := range w {
 		for j := range w[i] {
 			c = w[i][j]
-			tp += getColor(c.Color, false)+getColor(c.BgColor, true)+c.Tile
+			tp += getColor(c.Color, false) + getColor(c.BgColor, true) + c.Tile
 		}
 		if i != len(w)-1 {
-			tp += "\n"		
+			tp += "\n"
 		}
 	}
-	fmt.Println(tp)	
+	fmt.Println(tp)
 	fmt.Print("\003[37;40m\n")
 }
 
 /*returns color palette*/
-func
-palette() map[string]color.Attribute {
+func palette() map[string]color.Attribute {
 	colors := make(map[string]color.Attribute)
 	colors["green"] = color.FgGreen
 	colors["yellow"] = color.FgYellow
@@ -324,8 +309,7 @@ palette() map[string]color.Attribute {
 	return colors
 }
 
-func
-bgPalette() map[string]color.Attribute {
+func bgPalette() map[string]color.Attribute {
 	colors := make(map[string]color.Attribute)
 	colors["green"] = color.BgGreen
 	colors["yellow"] = color.BgYellow
@@ -352,8 +336,7 @@ func TermboxPalette() map[string]termbox.Attribute {
 }
 
 /*Adds world to a world as another layer. Will append tiles if needed. */
-func
-ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
+func ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
 	var color string
 	w := DuplicateWorld(world)
 	for i := 0; i < len(layers); i++ {
@@ -362,7 +345,7 @@ ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
 		for len(layers[i].World)+layers[i].Pos.X > len(w) {
 			w = append(w, []Tile{})
 		}
-		
+
 		for j := 0; j < len(layers[i].World); j++ {
 			for len(layers[i].World[j])+layers[i].Pos.Y > len(w[j]) {
 				w[j] = append(w[j], Tile{})
@@ -383,8 +366,7 @@ ReturnWithLayers(world [][]Tile, layers []Layer) ([][]Tile, error) {
 
 /*Compares if worlds are the same*/
 
-func
-CompareWorlds(world1, world2 [][]Tile) bool {
+func CompareWorlds(world1, world2 [][]Tile) bool {
 	var toReturn bool
 	if len(world1) != len(world2) {
 		toReturn = false
@@ -407,9 +389,8 @@ CompareWorlds(world1, world2 [][]Tile) bool {
 }
 
 /* Animates an int. Still doesnt work when duration is smaller, than the difference between the two input numbers*/
-func
-Animate(num1 *int, num2, duration int) {
-	frequency := float64(duration)/math.Abs(float64(*num1-num2))
+func Animate(num1 *int, num2, duration int) {
+	frequency := float64(duration) / math.Abs(float64(*num1-num2))
 	moveLenght := 1
 
 	var dir int
@@ -418,16 +399,16 @@ Animate(num1 *int, num2, duration int) {
 	} else {
 		dir = -1
 	}
-	
+
 	for *num1 != num2 {
 		if dir == 1 && *num1 >= num2-moveLenght {
 			*num1 = num2
 			return
 		} else if dir == -1 && *num1 <= num2+moveLenght {
 			*num1 = num2
-			return	
+			return
 		} else {
-			*num1 += moveLenght*dir
+			*num1 += moveLenght * dir
 			time.Sleep(time.Duration(frequency) * 1000 * time.Millisecond)
 		}
 	}
@@ -435,18 +416,17 @@ Animate(num1 *int, num2, duration int) {
 
 /* Converts an array of colors into a world of halfblocks. */
 
-func
-ParsePixMap(pix [][]string) [][]Tile {
+func ParsePixMap(pix [][]string) [][]Tile {
 	w := [][]Tile{}
 	for x := range pix {
-		if x % 2 == 0 {
+		if x%2 == 0 {
 			w = append(w, []Tile{})
 		}
 		for y := range pix[x] {
-			if x % 2 == 0 {
-				w[x/2] = append(w[x/2], Tile{Tile: "▀", Color: pix[x][y]})	
+			if x%2 == 0 {
+				w[x/2] = append(w[x/2], Tile{Tile: "▀", Color: pix[x][y]})
 			} else {
-				w[x/2][y].BgColor = pix[x][y]	
+				w[x/2][y].BgColor = pix[x][y]
 			}
 		}
 	}
@@ -455,8 +435,7 @@ ParsePixMap(pix [][]string) [][]Tile {
 
 /* Converts a world to pixmap */
 
-func
-WorldToPixMap(w [][]Tile) [][]string {
+func WorldToPixMap(w [][]Tile) [][]string {
 	pix := [][]string{}
 
 	for x := range w {
@@ -470,8 +449,7 @@ WorldToPixMap(w [][]Tile) [][]string {
 
 /* Same as ReturnWithLayers, but for pixmap. */
 
-func
-ReturnWithPixLayers(pixmap [][]string, layers []PixLayer) [][]string {
+func ReturnWithPixLayers(pixmap [][]string, layers []PixLayer) [][]string {
 	for i := 0; i < len(layers); i++ {
 		for j := 0; j < len(layers[i].PixMap); j++ {
 			for k := 0; k < len(layers[i].PixMap[j]); k++ {
@@ -484,8 +462,7 @@ ReturnWithPixLayers(pixmap [][]string, layers []PixLayer) [][]string {
 
 /* Duplicates a pixmap. */
 
-func
-DuplicatePix(p1 [][]string) [][]string {
+func DuplicatePix(p1 [][]string) [][]string {
 	p2 := [][]string{}
 	for i := range p1 {
 		p2 = append(p2, []string{})
@@ -498,25 +475,23 @@ DuplicatePix(p1 [][]string) [][]string {
 	return p2
 }
 
-
 /* Makes a cut from a pixmap. */
-func
-CutPix(pix [][]string, from Ve2, to Ve2) ([][]string, error) {
+func CutPix(pix [][]string, from Ve2, to Ve2) ([][]string, error) {
 	if from.X < 0 {
-		to.X += from.X*-1
+		to.X += from.X * -1
 		from.X = 0
 	}
 	if from.Y < 0 {
-		to.Y += from.Y*-1
+		to.Y += from.Y * -1
 		from.Y = 0
 	}
 	if to.X >= len(pix) {
-		to.X = len(pix)-1
+		to.X = len(pix) - 1
 	}
 	if to.Y >= len(pix[0]) {
-		to.Y = len(pix[0])-1
+		to.Y = len(pix[0]) - 1
 	}
-	
+
 	if /*from.X+to.X <= len(pix) && from.Y+to.Y <= len(pix[0])*/ true {
 		var toReturn [][]string
 		var toAppend []string
@@ -538,12 +513,10 @@ CutPix(pix [][]string, from Ve2, to Ve2) ([][]string, error) {
 	}
 }
 
-
 /* Applies changes using termbox */
-func
-ApplyChanges(w [][]Tile, changes []Ve2, centered bool) {
+func ApplyChanges(w [][]Tile, changes []Ve2, centered bool) {
 	var cTile Tile
-	offset := V2(0,0) 
+	offset := V2(0, 0)
 	if centered {
 		offset.X, offset.Y = GetSize()
 		offset.X /= 2
@@ -551,16 +524,15 @@ ApplyChanges(w [][]Tile, changes []Ve2, centered bool) {
 		offset.Y /= 2
 		offset.Y -= len(w[0])
 	}
-	
+
 	for i := range changes {
 		cTile = w[changes[i].X][changes[i].Y]
 		termbox.SetCell(changes[i].X+offset.X, changes[i].Y+offset.Y, rune(cTile.Tile[0]), TermboxPalette()[cTile.Color], TermboxPalette()[cTile.BgColor])
-	}	
+	}
 }
 
 /* Writes a world to Termbox buffer. You have to Init and Sync termbox yourself. If tile is longer than one character, cliw can deal with it. */
-func
-WriteToTermbox(w [][]Tile) {
+func WriteToTermbox(w [][]Tile) {
 	termbox.Init()
 	defer termbox.Close()
 	for i := range w {
