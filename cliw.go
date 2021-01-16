@@ -543,3 +543,13 @@ func WriteToTermbox(w [][]Tile) {
 	}
 	termbox.Sync()
 }
+
+/* Moves cursor to specified location */
+func SetCursor(pos Ve2) {
+	fmt.Printf("\033[%d;%df", pos.X, pos.Y)
+}
+
+/* Clears the screen */
+func Clear() {
+	fmt.Println("\033[2J")
+}
