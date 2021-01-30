@@ -22,7 +22,11 @@ func getColor(in string, bg bool) string {
 
 	/* Sets color to black if invalid */
 	if len(in) < 6 {
-		in = "000000"
+		if bg {
+			in = "000000"		
+		} else {
+			in = "ffffff"
+		}
 	}
 
 	/* Splits hexcode to three numbers */

@@ -71,7 +71,7 @@ func EditTile(world [][]Tile, pos Ve2, t Tile) ([][]Tile, error) {
 }*/
 
 /*Gets size of terminal window*/
-func GetSize() (int, int) {
+func GetSize() (Ve2) {
 	cmd := exec.Command("stty", "size")
 	cmd.Stdin = os.Stdin
 	var out bytes.Buffer
@@ -89,13 +89,14 @@ func GetSize() (int, int) {
 		fmt.Printf("getting terminal size: %s", err)
 	}
 
-	return h, w
+	return Ve2{h, w}
 }
 
 /*Draws world on the center of the screen
 can get additional blank margin for user input in ui*/
 func DrawCentered(w [][]Tile, additionalRow bool) {
-	he, wi := GetSize()
+	s := GetSize()
+	he, wi := s.X, s.Y
 	var rows, colls, wwidth int
 	var currentRow [][]Tile
 	currentRow = append(currentRow, make([]Tile, 0))
@@ -108,9 +109,8 @@ func DrawCentered(w [][]Tile, additionalRow bool) {
 	}
 	colls = (wi - wwidth) / 2
 
-	fmt.Println(strings.Repeat("\n", rows))
 	for i := 0; i < len(w); i++ {
-		fmt.Print(strings.Repeat(" ", colls))
+		SetCursor(Ve2{rows+i, colls})
 		currentRow[0] = w[i]
 		DrawWorld(currentRow)
 	}
@@ -292,7 +292,6 @@ func DrawWorld(w [][]Tile) {
 		}
 	}
 	fmt.Println(tp)
-	fmt.Print("\003[37;40m\n")
 }
 
 /*returns color palette*/
@@ -518,7 +517,7 @@ func ApplyChanges(w [][]Tile, changes []Ve2, centered bool) {
 	var cTile Tile
 	offset := V2(0, 0)
 	if centered {
-		offset.X, offset.Y = GetSize()
+		offset = GetSize()
 		offset.X /= 2
 		offset.X -= len(w)
 		offset.Y /= 2
@@ -552,4 +551,14 @@ func SetCursor(pos Ve2) {
 /* Clears the screen */
 func Clear() {
 	fmt.Println("\033[2J")
+}
+
+/* Sets a world column to be drawn at specific terminal column */ 
+func ColumnMargin(w [][]Tile, c, cPos int) [][]Tile {
+	for i := range w {
+		if c < len(w[i]) {
+			w[i][c].Tile = fmt.Sprintf("\033[%dG", cPos) + w[i][c].Tile
+		}
+	}
+	return w
 }
