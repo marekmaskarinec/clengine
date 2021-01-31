@@ -14,13 +14,13 @@ func LoadFont(path string) map[string]interface{} {
 	return tr
 }
 
-func TextToPixMap(font map[string]interface{}, color, bgcolor, text string) [][]string {
+func TextToPixMap(font map[string]interface{}, color, bgcolor, text string, size Ve2) [][]string {
 	var chars [][][]string
 	var split [][]string
 	var tr [][]string
-	for i:=0; i < 3; i++ {
+	for i:=0; i < size.X; i++ {
 		tr = append(tr, []string{})
-		for j:=0; j < len(text)*4; j++ {
+		for j:=0; j < len(text)*(size.Y+1); j++ {
 			tr[i] = append(tr[i], "black")
 		}
 	}
@@ -54,7 +54,7 @@ func TextToPixMap(font map[string]interface{}, color, bgcolor, text string) [][]
 	for i := range chars {
 		tr = ReturnWithPixLayers(tr, []PixLayer{
 			PixLayer{
-				Pos: Ve2{0, i*4}, PixMap: chars[i],
+				Pos: Ve2{0, i*(size.Y+1)}, PixMap: chars[i],
 			},
 		})
 	}
