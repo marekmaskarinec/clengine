@@ -469,8 +469,6 @@ func DuplicatePix(p1 [][]string) [][]string {
 			p2[i] = append(p2[i], p1[i][j])
 		}
 	}
-	fmt.Println(p1)
-	fmt.Println(p2)
 	return p2
 }
 
