@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func getColor(in string, bg bool) string {
+func GetColor(in string, bg bool) string {
 	/* Replaces old color map with hex codes */
 	color := map[string]string{
 		"red":     "ff0000",

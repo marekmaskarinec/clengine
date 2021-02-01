@@ -282,10 +282,12 @@ func DrawWorld(w [][]Tile) {
 	var c Tile
 	var tp string
 
+	w[len(w)-1] = append(w[len(w)-1], Tile{Tile: "", Color: "ffffff", BgColor: "000000"})
+
 	for i := range w {
 		for j := range w[i] {
 			c = w[i][j]
-			tp += getColor(c.Color, false) + getColor(c.BgColor, true) + c.Tile
+			tp += GetColor(c.Color, false) + GetColor(c.BgColor, true) + c.Tile
 		}
 		if i != len(w)-1 {
 			tp += "\n"
@@ -559,4 +561,16 @@ func ColumnMargin(w [][]Tile, c, cPos int) [][]Tile {
 		}
 	}
 	return w
+}
+
+func LoadPixMap(path string) [][]string {
+	dat, _ := ioutil.ReadFile(path)
+	var tr [][]string
+	json.Unmarshal(dat, &tr)
+	return tr
+}
+
+func SavePixMap(pm [][]string, path string) {
+	dat, _ := json.Marshal(pm)
+	ioutil.WriteFile(path, dat, 0644)	
 }
