@@ -281,13 +281,24 @@ func DrawWorldOld(world [][]Tile) {
 func DrawWorld(w [][]Tile) {
 	var c Tile
 	var tp string
+	var prev Tile
+
+	tp += GetColor(w[0][0].Color, false) + GetColor(w[0][0].BgColor, true)
 
 	w[len(w)-1] = append(w[len(w)-1], Tile{Tile: "", Color: "ffffff", BgColor: "000000"})
 
 	for i := range w {
 		for j := range w[i] {
 			c = w[i][j]
-			tp += GetColor(c.Color, false) + GetColor(c.BgColor, true) + c.Tile
+			if prev.Color != c.Color {
+				tp += GetColor(c.Color, false)
+			}
+			if prev.BgColor != c.BgColor {
+				tp += GetColor(c.BgColor, true)
+			}
+
+			tp += c.Tile
+			prev = c
 		}
 		if i != len(w)-1 {
 			tp += "\n"
