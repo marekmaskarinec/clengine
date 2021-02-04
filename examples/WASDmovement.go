@@ -1,17 +1,17 @@
 package main
 
 import (
-	"clengine"
+	"cliw"
 	"fmt"
 	"os"
 	"os/exec"
 )
 
 type game struct {
-	world  [][]clengine.Tile
-	wtd    [][]clengine.Tile
-	player clengine.Tile
-	pp     clengine.Ve2
+	world  [][]cliw.Tile
+	wtd    [][]cliw.Tile
+	player cliw.Tile
+	pp     cliw.Ve2
 }
 
 func run(com, arg string) {
@@ -26,7 +26,7 @@ func check(err error) {
 	}
 }
 
-func returnWorld(x [][]clengine.Tile) [][]clengine.Tile {
+func returnWorld(x [][]cliw.Tile) [][]cliw.Tile {
 	return x
 }
 
@@ -34,14 +34,17 @@ func main() {
 	var err error
 	//defining game variables
 	g := game{}                               //creating new game
-	g.world = clengine.LoadWorld("world.txt") //loading world
-	g.player = clengine.Tile{Tile: "X"}       //creating player tile
-	g.pp = clengine.V2(0, 0)                  //setting player's position
+	g.world = cliw.LoadWorld("world.txt") //loading world
+	g.player = cliw.Tile{Tile: "X"}       //creating player tile
+	g.pp = cliw.V2(0, 0)                  //setting player's position
 	//g.world, err = clengine.EditWorld(g.world, clengine.NewVe2(0, 0), clengine.NewVe2(2, 2), clengine.Tile{Tile: "^", Color: "blue"})
 
 	g.wtd = g.world
 
 	//bu := clengine.BattleUnit{Name: "unit", Tile: clengine.Tile{Tile: ":", Color: "red"}, Pos: clengine.NewVe2(2, 3), FocusPoint: g.pp, Health: 10, Distance: 2}
+
+	cliw.DrawWorld(g.world)
+	return
 
 	var refresh, tick int
 
@@ -74,16 +77,16 @@ func main() {
 		}
 		key = ""
 
-		g.wtd, err = clengine.EditTile(g.wtd, g.pp, g.player)
+		g.wtd, err = cliw.EditTile(g.wtd, g.pp, g.player)
 		check(err)
 		if refresh == 4000 {
 			run("clear", "")
-			clengine.DrawWorld(g.wtd)
+			cliw.DrawWorld(g.wtd)
 			refresh = 0
 		} else {
 			refresh++
 		}
-		clengine.LoadWorld("world.txt", &g.wtd) //loading world
+		g.wtd = cliw.LoadWorld("world.txt") //loading world
 		tick++
 	}
 }
