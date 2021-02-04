@@ -494,12 +494,12 @@ func CutPix(pix [][]string, from Ve2, to Ve2) ([][]string, error) {
 	if /*from.X+to.X <= len(pix) && from.Y+to.Y <= len(pix[0])*/ true {
 		var toReturn [][]string
 		var toAppend []string
-		for i := 0; i < to.X; i++ {
+		for i := 0; i <= to.X; i++ {
 			if i+from.X >= len(pix) {
 				break
 			}
 			toReturn = append(toReturn, toAppend)
-			for j := 0; j < to.Y; j++ {
+			for j := 0; j <= to.Y; j++ {
 				if j+from.Y >= len(pix[i]) {
 					break
 				}
