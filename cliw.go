@@ -437,9 +437,18 @@ func ParsePixMap(pix [][]string) [][]Tile {
 		}
 		for y := range pix[x] {
 			if x%2 == 0 {
-				w[x/2] = append(w[x/2], Tile{Tile: "▀", Color: pix[x][y]})
+				if pix[x][y] == "" {
+					w[x/2] = append(w[x/2], Tile{Tile: "▀", Color: "000000"})
+				} else {
+					w[x/2] = append(w[x/2], Tile{Tile: "▀", Color: pix[x][y]})
+				}
+				
 			} else {
-				w[x/2][y].BgColor = pix[x][y]
+				if pix[x][y] == "" {
+					w[x/2][y].BgColor = "000000"
+				} else {
+					w[x/2][y].BgColor = pix[x][y]		
+				}
 			}
 		}
 	}
@@ -621,6 +630,7 @@ func PNGToPixMap(filename string) (tr [][]string, err error) {
 	for i:=img.Bounds().Min.Y; i < img.Bounds().Max.Y; i++ {
 		tr = append(tr, []string{})
 		for j:=img.Bounds().Min.X; j < img.Bounds().Max.X; j++ {
+			// this will probably crash with unsymetrical images. we will see :]
 			col.r, col.g, col.b, col.a = img.At(j, i).RGBA() 
 
 			if col.a == 0 {
