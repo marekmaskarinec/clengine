@@ -638,9 +638,9 @@ func PNGToPixMap(filename string) (tr [][]string, err error) {
 				continue
 			}
 			
-			ta = strconv.FormatInt(int64(col.r), 16)
-			ta += strconv.FormatInt(int64(col.g), 16)
-			ta += strconv.FormatInt(int64(col.b), 16)
+			ta = strconv.FormatUint(uint64(col.r), 16)[0:2]
+			ta += strconv.FormatUint(uint64(col.g), 16)[0:2]
+			ta += strconv.FormatUint(uint64(col.b), 16)[0:2]
 
 			tr[i] = append(tr[i], ta)
 		}
