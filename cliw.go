@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"image/png"
 
 	"github.com/fatih/color"
 	"github.com/nsf/termbox-go"
@@ -465,7 +466,9 @@ func ReturnWithPixLayers(pixmap [][]string, layers []PixLayer) [][]string {
 	for i := 0; i < len(layers); i++ {
 		for j := 0; j < len(layers[i].PixMap); j++ {
 			for k := 0; k < len(layers[i].PixMap[j]); k++ {
-				pixmap[layers[i].Pos.X+j][layers[i].Pos.Y+k] = layers[i].PixMap[j][k]
+				if layers[i].PixMap[j][k] != "" {
+					pixmap[layers[i].Pos.X+j][layers[i].Pos.Y+k] = layers[i].PixMap[j][k]		
+				}
 			}
 		}
 	}
@@ -584,4 +587,53 @@ func LoadPixMap(path string) [][]string {
 func SavePixMap(pm [][]string, path string) {
 	dat, _ := json.Marshal(pm)
 	ioutil.WriteFile(path, dat, 0644)	
+}
+
+func FlipPixMapV(pm [][]string) (tr [][]string) {
+	for i := range pm {
+		tr = append(tr, []string{})
+		for j := range pm[i] {
+			tr[i] = append(tr[i], pm[i][len(pm[i]) - 1 - j])
+		}
+	}
+	return
+}
+
+func PNGToPixMap(filename string) (tr [][]string, err error) {
+	var col struct{
+		r uint32
+		g uint32
+		b uint32
+		a uint32
+	}
+	var ta string
+
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	img, err := png.Decode(bufio.NewReader(file))
+	if err != nil {
+		return nil, err
+	}
+
+	for i:=img.Bounds().Min.Y; i < img.Bounds().Max.Y; i++ {
+		tr = append(tr, []string{})
+		for j:=img.Bounds().Min.X; j < img.Bounds().Max.X; j++ {
+			col.r, col.g, col.b, col.a = img.At(j, i).RGBA() 
+
+			if col.a == 0 {
+				tr[i] = append(tr[i], "")
+				continue
+			}
+			
+			ta = strconv.FormatInt(int64(col.r), 16)
+			ta += strconv.FormatInt(int64(col.g), 16)
+			ta += strconv.FormatInt(int64(col.b), 16)
+
+			tr[i] = append(tr[i], ta)
+		}
+	}
+	return
 }

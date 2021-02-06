@@ -27,7 +27,7 @@ func TextToPixMap(font map[string]interface{}, color, bgcolor, text string, size
 
 	for i := range tr {
 		for j := range tr[i] {
-			tr[i][j] = "000000"
+			tr[i][j] = ""
 		}
 	}
 
